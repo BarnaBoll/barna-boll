@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
+  get "dashboards/show"
+  devise_for :users
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
-
-  root "pages#home"
 
   # Legal
   get "about",   to: "pages#about"
@@ -15,4 +15,13 @@ Rails.application.routes.draw do
   get "features", to: "pages#features"
   get "business", to: "pages#business"
   get "help",     to: "pages#help"
+
+
+  authenticated :user do
+    root "dashboards#show", as: :authenticated_root
+  end
+
+  unauthenticated do
+    root "pages#home"
+  end
 end

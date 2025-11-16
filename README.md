@@ -27,5 +27,7 @@ bin/rails tailwindcss:install
 - Deployment instructions
 
 bin/rails tailwindcss:build
-
 bin/rails tailwindcss:install
+
+bin/rails db:create
+bin/rails db:migrate

@@ -59,6 +59,7 @@ Rails.application.configure do
 
   config.hosts << "barnaboll.se"
   config.hosts << "www.barnaboll.se"
+  config.hosts << "barnaboll-a2f6ad32232b.herokuapp.com"
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

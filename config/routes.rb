@@ -1,14 +1,6 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
-  constraints(host: "www.barnaboll.se") do
-    # redirect root
-    get "/", to: redirect("https://barnaboll.se/")
-
-    # redirect everything else
-    get "/*path", to: redirect("https://barnaboll.se/%{path}")
-  end
-
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
 
   root "pages#home"

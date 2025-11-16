@@ -5,6 +5,12 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
+  constraints(host: "www.barnaboll.se") do
+    match "/(*path)", to: redirect { |_params, req|
+      "https://barnaboll.se#{req.fullpath}"
+    }, via: :all
+  end
+
   # Legal
   get "about",   to: "pages#about"
   get "privacy", to: "pages#privacy"

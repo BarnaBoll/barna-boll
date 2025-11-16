@@ -1,10 +1,4 @@
 Rails.application.routes.draw do
-  constraints(host: "www.barnaboll.se") do
-    match "/(*path)", to: redirect { |_params, req|
-      "https://barnaboll.se#{req.fullpath}"
-    }, via: :all
-  end
-
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }

@@ -1,0 +1,65 @@
+<% content_for :title, "Hjälp & FAQ – Barnaboll winner-stays-on sessions" %>
+<% content_for :meta_description, "Vanliga frågor om Barnaboll: hur du anmäler dig, nivå, betalning, avbokning och vad du behöver ta med till våra winner-stays-on fotbollssessions i Malmö, Uppsala, Stockholm & Göteborg." %>
+
+<div class="min-h-[calc(100vh-5rem)] flex flex-col bg-slate-950 text-slate-50">
+  <section class="pt-8 pb-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="text-[11px] font-semibold tracking-[0.22em] uppercase text-orange-300/80 mb-3">
+        Hjälp &amp; vanliga frågor
+      </p>
+
+      <h1 class="text-3xl md:text-4xl lg:text-[2.6rem] font-semibold tracking-tight text-slate-50 mb-4">
+        Behöver du hjälp med Barnaboll?
+      </h1>
+
+      <p class="text-sm md:text-base text-slate-300 mb-8 max-w-2xl">
+        Här hittar du svar på de vanligaste frågorna om Barnaboll – från anmälan och nivå
+        till betalning och avbokning. Hittar du inte det du söker?
+        Skicka ett DM till <span class="font-semibold">@barnaboll</span> på Instagram.
+      </p>
+
+      <div class="space-y-4">
+        <% faq = [
+          ["Hur anmäler jag mig till en session?",
+           "Vi släpper info om kommande sessions på Instagram. När du ser en session i din stad, skicka DM med namn, nivå och om du kommer själv eller med vänner."],
+          ["Vilken nivå är det?",
+           "Nivån varierar lite per stad och session, men generellt vill vi ha bra tempo och spelare som har spelat en del innan. Är du osäker – skriv till oss så guidar vi dig."],
+          ["Vad behöver jag ta med?",
+           "Inomhus-/futsalskor eller dobbar beroende på plan, vattenflaska och gärna en mörk och en ljus tröja om vi inte kör västar just den dagen."],
+          ["Hur betalar jag?",
+           "Detaljer kring betalning står alltid i info för respektive session. Ofta Swish på plats eller innan via info vi skickar i DM."],
+          ["Kan jag avboka?",
+           "Ja, men meddela oss så tidigt som möjligt så vi kan ge platsen till någon annan. No-shows utan att höra av sig uppskattas inte."]
+        ] %>
+
+        <% faq.each_with_index do |(question, answer), idx| %>
+          <details
+            class="group rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3"
+            <%= 'open' if idx.zero? %>>
+            <summary class="flex cursor-pointer items-center justify-between gap-2 text-sm font-medium text-slate-100">
+              <span><%= question %></span>
+              <!-- Brand-coloured + / - icons -->
+              <span class="text-xs text-orange-300 group-open:hidden">+</span>
+              <span class="text-xs text-orange-300 hidden group-open:inline">–</span>
+            </summary>
+            <p class="mt-2 text-xs md:text-sm text-slate-300">
+              <%= answer %>
+            </p>
+          </details>
+        <% end %>
+      </div>
+
+      <div class="mt-10 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 text-sm">
+        <p class="font-semibold mb-2 text-slate-100">Fortfarande frågetecken?</p>
+        <p class="text-slate-300 mb-3">
+          Skicka ett DM till
+          <%= link_to "@barnaboll", "https://www.instagram.com/barnaboll/", target: "_blank", rel: "noopener", class: "text-orange-300 hover:underline" %>
+          så hjälper vi dig.
+        </p>
+        <%= link_to "Gå till kontakt",
+                    contact_path,
+                    class: "inline-flex items-center justify-center rounded-full border border-orange-300/80 text-orange-200 px-4 py-1.5 text-xs hover:bg-orange-300 hover:text-slate-950 transition" %>
+      </div>
+    </div>
+  </section>
+</div>

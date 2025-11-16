@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="sv">
+
+<head>
+  <meta charset="utf-8">
+  <title>422 – Ändringen kunde inte sparas | Barnaboll</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#020617">
+  <style>
+    /* reuse exact same CSS as 500.html */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      font-size: 16px
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: #020617;
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system,
+        BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility
+    }
+
+    .shell {
+      position: relative;
+      width: 100%;
+      max-width: 40rem;
+      border-radius: 1.75rem;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(30, 64, 175, 0.55);
+      box-shadow: 0 0 60px rgba(15, 23, 42, 0.9);
+      padding: 2rem 1.75rem 1.9rem
+    }
+
+    @media (min-width:768px) {
+      .shell {
+        padding: 2.75rem 2.5rem 2.4rem
+      }
+    }
+
+    .glow {
+      position: absolute;
+      inset: auto -4rem -4rem auto;
+      width: 11rem;
+      height: 11rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, #f97316 0, #fb7185 40%, transparent 70%);
+      filter: blur(32px);
+      opacity: .6;
+      pointer-events: none
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: 1.25rem
+    }
+
+    .logo-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #fb7185, #fb923c 55%, #f97316 100%);
+      box-shadow: 0 0 30px rgba(248, 113, 113, 0.35);
+      overflow: hidden
+    }
+
+    .logo-pill img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit
+    }
+
+    .brand-text-small {
+      font-size: .65rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: #f97316
+    }
+
+    .brand-sub {
+      font-size: .7rem;
+      color: #9ca3af;
+      margin-top: .1rem
+    }
+
+    .headline {
+      font-size: 1.9rem;
+      line-height: 1.1;
+      font-weight: 700;
+      color: #f9fafb;
+      margin-bottom: .85rem
+    }
+
+    @media (min-width:768px) {
+      .headline {
+        font-size: 2.3rem
+      }
+    }
+
+    .headline span {
+      background: linear-gradient(90deg, #fb923c, #f97316, #fb7185);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent
+    }
+
+    .code-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .25rem .65rem;
+      border-radius: 999px;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fed7aa;
+      background: rgba(30, 64, 175, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.4);
+      margin-bottom: .75rem
+    }
+
+    p {
+      font-size: .9rem;
+      line-height: 1.5;
+      color: #9ca3af
+    }
+
+    .hint {
+      font-size: .75rem;
+      color: #6b7280;
+      margin-top: .6rem
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: 1.5rem
+    }
+
+    a.button-primary,
+    a.button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .55rem 1.45rem;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .18s ease-out;
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap
+    }
+
+    a.button-primary {
+      color: #020617;
+      background-image: linear-gradient(90deg, #fb923c, #fb7185);
+      box-shadow: 0 14px 45px rgba(15, 23, 42, 0.9), 0 0 40px rgba(248, 113, 113, 0.45)
+    }
+
+    a.button-primary:hover {
+      background-image: linear-gradient(90deg, #fdba74, #fb7185);
+      transform: translateY(-1px)
+    }
+
+    a.button-secondary {
+      color: #e5e7eb;
+      background: transparent;
+      border-color: rgba(148, 163, 184, 0.7)
+    }
+
+    a.button-secondary:hover {
+      border-color: #fb7185;
+      color: #fecaca;
+      background: rgba(15, 23, 42, 0.9)
+    }
+
+    .footer-note {
+      margin-top: 1.6rem;
+      font-size: .7rem;
+      color: #4b5563
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell" aria-labelledby="error-title">
+    <div class="glow" aria-hidden="true"></div>
+
+    <div class="badge-row">
+      <div class="logo-pill" aria-hidden="true">
+        <img src="/barnaboll_logo.jpg" alt="Barnaboll-logo">
+      </div>
+      <div>
+        <div class="brand-text-small">Barnaboll</div>
+        <div class="brand-sub">Winner-stays-on sessions</div>
+      </div>
+    </div>
+
+    <div class="code-pill">422 · Ändringen avvisades</div>
+
+    <h1 class="headline" id="error-title">
+      Ändringen <span>kunde inte sparas.</span>
+    </h1>
+
+    <p>
+      Något med din förfrågan gick inte igenom. Ladda om sidan och försök igen,
+      eller gå tillbaka till startsidan.
+    </p>
+
+    <div class="actions">
+      <a href="/" class="button-primary">Till startsidan</a>
+      <a href="https://www.instagram.com/barnaboll/" class="button-secondary">DM @barnaboll</a>
+    </div>
+
+    <p class="footer-note">
+      Om felet fortsätter kan du ta en skärmdump och skicka till oss via DM.
+    </p>
+  </main>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Barnaboll" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="<%= asset_path('barnaboll_logo.jpg') %>" type="image/jpeg">
+    <link rel="apple-touch-icon" href="<%= asset_path('barnaboll_logo.jpg') %>">
+
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-slate-950 text-slate-50">
+    <%= render "shared/top_nav" %>
+
+    <!-- Main content wrapper (no extra padding; header is sticky, not fixed) -->
+    <div>
+      <%= render "shared/alerts" %>
+
+      <main>
+        <%= yield %>
+      </main>
+
+      <%= render "shared/footer" %>
+    </div>
+  </body>
+</html>

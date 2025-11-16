@@ -1,0 +1,21 @@
+<% if flash.any? %>
+  <div class="page-shell mt-4">
+    <% flash.each do |type, message| %>
+      <% next if message.blank? %>
+
+      <% css =
+        case type.to_s
+        when "notice"
+          "border-emerald-500/60 bg-emerald-500/10 text-emerald-100"
+        when "alert", "error"
+          "border-rose-500/60 bg-rose-500/10 text-rose-100"
+        else
+          "border-slate-600 bg-slate-800 text-slate-50"
+        end %>
+
+      <div class="mb-3 rounded-2xl border px-4 py-3 text-xs md:text-sm <%= css %>">
+        <span><%= message %></span>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,95 @@
+<% content_for :title, "Kontakt – Hör av dig till Barnaboll" %>
+<% content_for :meta_description, "Kontakta Barnaboll för anmälan, frågor, samarbeten eller events. Snabbaste vägen är via Instagram DM @barnaboll, men du kan också använda kontaktformuläret." %>
+
+<div class="min-h-[calc(100vh-5rem)] flex flex-col bg-slate-950 text-slate-50">
+  <section class="pt-8 pb-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="text-[11px] font-semibold tracking-[0.22em] uppercase text-orange-300/80 mb-3">
+        Kontakt
+      </p>
+
+      <h1 class="text-3xl md:text-4xl lg:text-[2.6rem] font-semibold tracking-tight text-slate-50 mb-4">
+        Hör av dig till Barnaboll.
+      </h1>
+
+      <p class="text-slate-300 text-sm md:text-base mb-8 max-w-3xl">
+        Snabbaste vägen till oss är via Instagram DM. För samarbeten, events eller andra
+        frågor kan du också använda formuläret nedan. Vi återkommer så snart vi kan.
+      </p>
+
+      <div class="grid gap-8 md:grid-cols-[1.5fr,1fr] items-start">
+        <!-- Contact Form (front-end only) -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+          <form class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">
+                Namn
+              </label>
+              <input type="text"
+                     class="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-1 focus:ring-orange-400/80"
+                     placeholder="För- och efternamn">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">
+                E-post
+              </label>
+              <input type="email"
+                     class="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-1 focus:ring-orange-400/80"
+                     placeholder="du@example.com">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">
+                Ämne
+              </label>
+              <input type="text"
+                     class="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-1 focus:ring-orange-400/80"
+                     placeholder="T.ex. 'Företagsevent i Malmö'">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">
+                Meddelande
+              </label>
+              <textarea rows="4"
+                        class="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-1 focus:ring-orange-400/80"
+                        placeholder="Berätta kort vad du har på gång."></textarea>
+            </div>
+            <button type="button"
+                    class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-amber-300 text-slate-950 font-semibold px-6 py-2 text-sm shadow-lg shadow-orange-900/40 hover:from-pink-400 hover:via-orange-300 hover:to-amber-200 transition">
+              Skicka (placeholder)
+            </button>
+            <p class="text-[11px] text-slate-400 mt-1">
+              Formuläret är just nu endast design – koppla gärna på din egen backend.
+            </p>
+          </form>
+        </div>
+
+        <!-- Contact info -->
+        <div class="space-y-5">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm">
+            <p class="text-xs uppercase tracking-[0.18em] text-slate-400 mb-1">Instagram</p>
+            <p class="mb-2">
+              <%= link_to "@barnaboll",
+                          "https://www.instagram.com/barnaboll/",
+                          target: "_blank",
+                          rel: "noopener",
+                          class: "font-semibold text-orange-300 hover:underline" %>
+            </p>
+            <p class="text-xs text-slate-400">
+              DM för anmälan till sessions, frågor kring nivå eller plats.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm">
+            <p class="text-xs uppercase tracking-[0.18em] text-slate-400 mb-1">
+              Business / samarbeten
+            </p>
+            <p class="text-xs text-slate-300">
+              För företag, partnerskap och sponsorfrågor – använd formuläret eller skriv DM
+              med ämnesraden <span class="font-mono text-orange-300">Business</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

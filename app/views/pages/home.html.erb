@@ -1,0 +1,269 @@
+<% content_for :title, "Barnaboll – Fotboll som den ska spelas" %>
+<% content_for :meta_description, "Barnaboll är en fotbollscommunity för spelare som vill ha tempo, nivå och gemenskap. Winner-stays-on-sessioner i Malmö, Uppsala, Stockholm & Göteborg." %>
+
+<div class="min-h-[calc(100vh-5rem)] flex flex-col bg-slate-950 text-slate-50">
+
+  <!-- Hero -->
+  <section class="pt-8 pb-10">
+    <div class="max-w-5xl mx-auto px-4 grid gap-10 items-center lg:grid-cols-2">
+      <!-- Left: copy -->
+      <div class="order-1 lg:order-1">
+        <p class="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-orange-300 mb-3">
+          <span class="h-1 w-1 rounded-full bg-orange-400"></span>
+          ⚽ Barnaboll
+        </p>
+
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-50 mb-4">
+          Fotboll som den <span class="text-orange-300">ska</span> spelas.
+        </h1>
+
+        <p class="text-sm sm:text-base text-slate-300 max-w-xl">
+          Barnaboll är en fotbollscommunity för spelare som vill ha tempo, nivå och gemenskap.
+          Winner-stays-on-koncept i Malmö, Uppsala, Stockholm &amp; Göteborg – du tar med
+          skorna, vi fixar resten.
+        </p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <%= link_to "Boka plats via DM",
+                      "https://www.instagram.com/barnaboll/",
+                      target: "_blank",
+                      rel: "noopener",
+                      class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition" %>
+
+          <%= link_to "Se highlights",
+                      "https://www.instagram.com/barnaboll/reels/",
+                      target: "_blank",
+                      rel: "noopener",
+                      class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold text-slate-200 border border-slate-600/60 hover:border-pink-400 hover:text-pink-300 hover:bg-slate-900/40 transition" %>
+
+          <p class="text-[11px] text-slate-500 w-full sm:w-auto">
+            NU ÄVEN I GÖTEBORG · Winner stays on · #BARNABOLL
+          </p>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-4 text-[11px] text-slate-400">
+          <span class="inline-flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
+            Winner-stays-on-format med högt tempo
+          </span>
+          <span class="inline-flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-300"></span>
+            Fasta sessions i fyra städer
+          </span>
+          <span class="inline-flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full bg-pink-400"></span>
+            Community-fokus före klubbtröjor
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: mock session card -->
+      <div class="relative order-2 lg:order-2">
+        <div class="pointer-events-none absolute -top-6 -right-6 h-32 w-32 rounded-full bg-orange-500/15 blur-3xl"></div>
+
+        <div class="relative rounded-3xl border border-slate-800 bg-slate-950/70 backdrop-blur shadow-2xl shadow-slate-950/60 p-5 space-y-4 text-sm">
+          <div class="flex items-start justify-between gap-3 text-xs text-slate-300 mb-1">
+            <div>
+              <p class="uppercase tracking-[0.2em] text-slate-500 mb-1">
+                Sessions den här veckan
+              </p>
+              <p class="text-[11px] text-slate-400">Malmö · Uppsala · Stockholm · Göteborg</p>
+            </div>
+            <span class="font-mono text-[11px] text-orange-300">
+              4 städer
+            </span>
+          </div>
+
+          <div class="grid gap-3 text-sm">
+            <% [
+              ["Malmö", "Futsal · Hög nivå"],
+              ["Uppsala", "Winner stays on"],
+              ["Stockholm", "Fredagsfotboll"],
+              ["Göteborg", "Ny stad · nya lirare"]
+            ].each do |city, tagline| %>
+              <div class="flex items-center justify-between rounded-2xl bg-slate-900/80 border border-slate-800 px-3 py-2.5">
+                <div>
+                  <p class="font-semibold text-slate-50"><%= city %></p>
+                  <p class="text-[11px] text-slate-400"><%= tagline %></p>
+                </div>
+                <span class="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 text-orange-300 font-medium border border-orange-400/50">
+                  Platser kvar
+                </span>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] pt-3 border-t border-slate-800 mt-2">
+            <span class="text-slate-400">Anmälan via Instagram DM</span>
+            <span class="font-mono text-orange-300">#BARNABOLL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cities / feature cards -->
+  <section class="border-t border-slate-800/80">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <h2 class="text-base font-semibold text-slate-100 mb-1">
+        Fyra städer, samma vibe.
+      </h2>
+      <p class="text-sm text-slate-400 mb-6">
+        Oavsett om du spelar i Malmö, Uppsala, Stockholm eller Göteborg ska Barnaboll kännas likadant:
+        tempo, nivå och respekt på planen.
+      </p>
+
+      <div class="grid gap-4 text-sm md:grid-cols-4">
+        <% [
+          ["Malmö", "Där allt började. Intensiva matcher och fasta tider."],
+          ["Uppsala", "Tekniska lirare, mycket tempo, mycket snack."],
+          ["Stockholm", "Fredagsfotboll när den är som bäst."],
+          ["Göteborg", "Resan fortsätter – nyaste tillskottet i BARNA-familjen."]
+        ].each do |city, copy| %>
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+            <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-1">
+              Stad
+            </p>
+            <h3 class="font-semibold text-slate-100 mb-1 text-sm"><%= city %></h3>
+            <p class="text-[12px] text-slate-300"><%= copy %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="border-t border-slate-800/80">
+    <div class="max-w-5xl mx-auto px-4 py-8 grid gap-8 md:grid-cols-2">
+      <div>
+        <h2 class="text-base font-semibold text-slate-100 mb-2">
+          Så funkar Barnaboll.
+        </h2>
+        <p class="text-sm text-slate-400 mb-4">
+          Vi vill göra det enkelt att spela fotboll på bra nivå – utan att vara låst till ett lag.
+          Du dyker upp, vi fixar hall, upplägg och vibe.
+        </p>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li class="flex gap-2">
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-orange-400 flex-shrink-0"></span>
+            <span>Vi släpper kommande sessions på Instagram <span class="font-semibold">@barnaboll</span>.</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-orange-400 flex-shrink-0"></span>
+            <span>Du anmäler dig via DM med namn, stad, nivå och om du kommer själv eller med vänner.</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-orange-400 flex-shrink-0"></span>
+            <span>Vi bekräftar din plats och skickar tid, plats och format (t.ex. futsal / 5v5).</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-1 h-1.5 w-1.5 rounded-full bg-orange-400 flex-shrink-0"></span>
+            <span>På plats kör vi winner-stays-on – du ger allt på planen, vi sköter rotation och struktur.</span>
+          </li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500">
+          Nivån ska vara hög men inkluderande: du behöver inte vara proffs, men du ska gilla att tävla.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-sm font-semibold text-slate-100 mb-2">
+            Vad du alltid kan räkna med
+          </h3>
+          <ul class="space-y-2 text-xs text-slate-400">
+            <li>Fasta starttider och tydlig kommunikation innan varje session.</li>
+            <li>Strukturerat upplägg med korta, intensiva matcher och snabba byten.</li>
+            <li>Schysst stämning: hårt spel är okej, skitbeteende är det inte.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-semibold text-slate-100 mb-2">
+            För vem?
+          </h3>
+          <ul class="space-y-2 text-xs text-slate-400">
+            <li>Dig som saknar omklädningsrummet men inte vill spela seriesystem.</li>
+            <li>Kompisgäng som vill ha en återkommande session med hög nivå.</li>
+            <li>Spelare från olika klubbar som vill mötas på neutral mark.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Highlights gallery -->
+  <section id="highlights" class="border-t border-slate-800/80">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-slate-100">
+            Highlights från planen.
+          </h2>
+          <p class="text-sm text-slate-400">
+            Ett smakprov från Barna Cupen och våra sessions.
+          </p>
+        </div>
+        <%= link_to "@barnaboll reels",
+                    "https://www.instagram.com/barnaboll/reels/",
+                    target: "_blank",
+                    rel: "noopener",
+                    class: "hidden sm:inline-flex items-center rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200 hover:border-pink-400 hover:text-pink-300" %>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3">
+        <% [
+          ["Barna Cupen", "Turnering med fullt ös och publik.", "barna_cupen.jpg"],
+          ["Indoor session", "Intensiv futsal och snabba byten.", "image_1.jpg"],
+          ["Matchmoment", "Winner-stays-on och tajta matcher.", "image_2.jpg"]
+        ].each do |title, copy, image_name| %>
+          <div class="group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60 shadow-lg shadow-slate-950/50">
+            <div class="aspect-[4/5] overflow-hidden">
+              <%= image_tag image_name,
+                            alt: title,
+                            class: "h-full w-full object-cover transition duration-500 group-hover:scale-105 group-hover:brightness-110" %>
+            </div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/15 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 p-4">
+              <p class="text-xs font-semibold text-slate-50 mb-0.5"><%= title %></p>
+              <p class="text-[11px] text-slate-300"><%= copy %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / closing -->
+  <section class="border-t border-slate-800/80 pb-10">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <div class="relative overflow-hidden rounded-[2.25rem] bg-slate-950/90 border border-orange-400/40 shadow-[0_0_80px_rgba(249,115,22,0.18)]">
+        <!-- subtle glow stripes -->
+        <div class="pointer-events-none absolute -top-16 left-10 h-24 w-64 bg-gradient-to-r from-orange-400/25 via-pink-400/15 to-transparent blur-3xl"></div>
+        <div class="pointer-events-none absolute bottom-0 right-0 h-24 w-40 bg-gradient-to-tl from-pink-400/20 via-orange-400/10 to-transparent blur-3xl"></div>
+
+        <div class="relative px-6 py-6 md:px-12 md:py-7 text-center space-y-3">
+          <h2 class="text-2xl md:text-3xl font-bold">
+            Vill du spela nästa session?
+          </h2>
+          <p class="max-w-2xl mx-auto text-sm md:text-base text-slate-200">
+            Skicka ett DM till <span class="font-semibold">@barnaboll</span> med din stad,
+            position och nivå, så återkommer vi med nästa tillgängliga tid.
+          </p>
+
+          <div class="flex justify-center">
+            <%= link_to "@barnaboll på Instagram",
+                        "https://www.instagram.com/barnaboll/",
+                        target: "_blank",
+                        rel: "noopener",
+                        class: "inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400 transition" %>
+          </div>
+
+          <p class="text-[11px] text-slate-500">
+            Begränsat antal platser per session – först till kvarn gäller.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

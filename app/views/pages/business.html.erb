@@ -1,0 +1,66 @@
+<% content_for :title, "Business & samarbeten – Aktivera ert varumärke med Barnaboll" %>
+<% content_for :meta_description, "Barnaboll skapar fotbollsevents, cuper och content för företag i Malmö, Uppsala, Stockholm & Göteborg. Läs mer om företagsevent, sponsring och partnerskap." %>
+
+<div class="min-h-[calc(100vh-5rem)] flex flex-col bg-slate-950 text-slate-50">
+  <section class="pt-8 pb-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="text-[11px] font-semibold tracking-[0.22em] uppercase text-orange-300/80 mb-3">
+        För företag &amp; partners
+      </p>
+
+      <h1 class="text-3xl md:text-4xl lg:text-[2.6rem] font-semibold tracking-tight text-slate-50 mb-4">
+        Aktivera ert varumärke genom fotboll.
+      </h1>
+
+      <p class="text-slate-300 text-base md:text-lg mb-6 max-w-3xl">
+        Barnaboll samlar engagerade fotbollsspelare i Malmö, Uppsala, Stockholm
+        och Göteborg. Vi skapar format där tävling, community och content går
+        hand i hand – perfekt för företag som vill synas på riktigt.
+      </p>
+
+      <div class="grid gap-6 md:grid-cols-3 mb-10">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+          <h2 class="font-semibold mb-2 text-sm text-slate-100">Företagsevent &amp; cup</h2>
+          <p class="text-xs text-slate-300">
+            Skräddarsydda turneringar och sessions för ert företag eller kundgrupp.
+            Vi fixar hall, domare, format och vinnarpokal.
+          </p>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+          <h2 class="font-semibold mb-2 text-sm text-slate-100">Sponsring &amp; partnerskap</h2>
+          <p class="text-xs text-slate-300">
+            Exponering på tröjor, content i sociala medier, naming rights för
+            sessions eller cuper – vi bygger paket tillsammans.
+          </p>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+          <h2 class="font-semibold mb-2 text-sm text-slate-100">Content &amp; social</h2>
+          <p class="text-xs text-slate-300">
+            Levande content från riktiga matcher. Perfekt för varumärken som vill
+            synas i en autentisk miljö, inte i en studio.
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-orange-400/40 bg-orange-400/5 px-6 py-7 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <p class="text-sm font-semibold text-orange-200 mb-1">Intresserad?</p>
+          <p class="text-sm text-slate-100">
+            Hör av dig för partnerskap, events eller sponsoridéer.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <%= link_to "DM @barnaboll",
+                      "https://www.instagram.com/barnaboll/",
+                      target: "_blank",
+                      rel: "noopener",
+                      class: "inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-amber-300 text-slate-950 font-semibold px-5 py-2 text-xs shadow-md shadow-orange-900/40 hover:from-pink-400 hover:via-orange-300 hover:to-amber-200 transition" %>
+
+          <%= link_to "Gå till kontakt",
+                      contact_path,
+                      class: "inline-flex items-center justify-center rounded-full border border-orange-300 text-orange-200 px-5 py-2 text-xs hover:bg-orange-300 hover:text-slate-950 transition" %>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

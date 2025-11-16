@@ -57,6 +57,9 @@ Rails.application.configure do
   Rails.application.routes.default_url_options[:host] = "barnaboll.se"
   Rails.application.routes.default_url_options[:protocol] = "https"
 
+  config.hosts << "barnaboll.se"
+  config.hosts << "www.barnaboll.se"
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false

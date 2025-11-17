@@ -20,6 +20,15 @@ Rails.application.routes.draw do
   get "business", to: "pages#business"
   get "help",     to: "pages#help"
 
+  namespace :admin do
+    root "dashboard#index"
+
+    resources :users do
+      member do
+        patch :toggle_admin
+      end
+    end
+  end
 
   authenticated :user do
     root "dashboards#show", as: :authenticated_root

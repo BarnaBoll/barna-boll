@@ -1,0 +1,72 @@
+<%= form_with model: [:admin, @user], class: "space-y-4" do |f| %>
+  <% if @user.errors.any? %>
+    <div class="rounded-2xl border border-red-500/60 bg-red-500/10 p-3 text-xs text-red-100">
+      <p class="font-semibold mb-1">
+        Kunde inte spara användaren. Korrigera följande:
+      </p>
+      <ul class="list-disc list-inside space-y-0.5">
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Namn
+      </label>
+      <%= f.text_field :name,
+                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        E-post
+      </label>
+      <%= f.email_field :email,
+                        class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <%= f.check_box :admin,
+                    class: "rounded border-slate-700 bg-slate-900 text-orange-400 focus:ring-orange-400/70" %>
+    <span class="text-xs text-slate-300">Ge admin-rättigheter</span>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Lösenord
+      </label>
+      <%= f.password_field :password,
+                           autocomplete: "new-password",
+                           class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      <% unless @user.new_record? %>
+        <p class="mt-1 text-[11px] text-slate-500">
+          Lämna tomt för att behålla nuvarande lösenord.
+        </p>
+      <% end %>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Bekräfta lösenord
+      </label>
+      <%= f.password_field :password_confirmation,
+                           autocomplete: "new-password",
+                           class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+  </div>
+
+  <div class="flex gap-3 pt-2">
+    <%= f.submit(@user.new_record? ? "Skapa användare" : "Uppdatera användare",
+                 class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition") %>
+
+    <%= link_to "Avbryt",
+                @user.new_record? ? admin_users_path : admin_user_path(@user),
+                class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-slate-700 text-slate-200 hover:border-pink-400 hover:text-pink-300" %>
+  </div>
+<% end %>

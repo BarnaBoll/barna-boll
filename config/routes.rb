@@ -1,6 +1,14 @@
 Rails.application.routes.draw do
   get "dashboards/show"
+
   devise_for :users
+
+  resource :profile,
+          only: [ :show, :update, :destroy ],
+          controller: "profiles" do
+    post :update_password
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }

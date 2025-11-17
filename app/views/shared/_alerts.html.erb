@@ -1,21 +1,97 @@
-<% if flash.any? %>
-  <div class="page-shell mt-4">
+<!-- Toast container (top-right) -->
+<div
+  id="flash-container"
+  class="fixed inset-x-0 top-4 flex justify-end px-4 pointer-events-none z-50"
+>
+  <div id="flash-inner" class="max-w-sm w-full space-y-2">
     <% flash.each do |type, message| %>
       <% next if message.blank? %>
+      <% level = type.to_s %>
+      <% color_classes =
+           if %w[notice success].include?(level)
+             "border-emerald-500/60 bg-emerald-950/90 text-emerald-50"
+           elsif %w[alert error danger].include?(level)
+             "border-rose-500/60 bg-rose-950/90 text-rose-50"
+           else
+             "border-slate-600/70 bg-slate-900/95 text-slate-50"
+           end %>
 
-      <% css =
-        case type.to_s
-        when "notice"
-          "border-emerald-500/60 bg-emerald-500/10 text-emerald-100"
-        when "alert", "error"
-          "border-rose-500/60 bg-rose-500/10 text-rose-100"
-        else
-          "border-slate-600 bg-slate-800 text-slate-50"
-        end %>
-
-      <div class="mb-3 rounded-2xl border px-4 py-3 text-xs md:text-sm <%= css %>">
-        <span><%= message %></span>
+      <div
+        class="flash-toast opacity-0 -translate-y-2 transition-all duration-300 ease-out pointer-events-auto rounded-xl px-3 py-2.5 shadow-xl flex items-start gap-2 border text-xs <%= color_classes %>"
+        data-flash-type="<%= level %>"
+      >
+        <div class="mt-0.5">
+          <% if %w[notice success].include?(level) %>
+            <span class="text-[13px]">✅</span>
+          <% elsif %w[alert error danger].include?(level) %>
+            <span class="text-[13px]">⚠️</span>
+          <% else %>
+            <span class="text-[13px]">ℹ️</span>
+          <% end %>
+        </div>
+        <div class="flex-1">
+          <p class="leading-snug">
+            <%= message %>
+          </p>
+        </div>
+    <button
+    type="button"
+    class="ml-2 inline-flex items-center justify-center opacity-80 hover:opacity-100"
+    aria-label="Close notification"
+    data-flash-close="true"
+    >
+    <%= image_tag "icons/close.svg",
+                    class: "h-5 w-5",  
+                    alt: "Close notification" %>
+    </button>
       </div>
     <% end %>
   </div>
-<% end %>
+</div>
+     <script>
+      document.addEventListener("turbo:load", function () {
+        // Mobile nav
+        var btn = document.getElementById("mobile-nav-toggle");
+        var menu = document.getElementById("mobile-nav");
+        if (btn && menu) {
+          btn.onclick = function () {
+            menu.classList.toggle("hidden");
+          };
+        }
+
+        // Toasts
+        var toasts = document.querySelectorAll(".flash-toast");
+
+        function hideToast(toast) {
+          toast.classList.add("opacity-0", "-translate-y-2");
+          toast.addEventListener("transitionend", function handler() {
+            toast.removeEventListener("transitionend", handler);
+            if (toast.parentNode) {
+              toast.parentNode.removeChild(toast);
+            }
+          });
+        }
+
+        toasts.forEach(function (toast) {
+          // Animate in (from top)
+          requestAnimationFrame(function () {
+            toast.classList.remove("opacity-0", "-translate-y-2");
+          });
+
+          // Auto-dismiss
+          var timeoutId = setTimeout(function () {
+            hideToast(toast);
+          }, 4500);
+
+          // Close button
+          var closeBtn = toast.querySelector("[data-flash-close]");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", function (e) {
+              e.preventDefault();
+              clearTimeout(timeoutId);
+              hideToast(toast);
+            });
+          }
+        });
+      });
+ </script>

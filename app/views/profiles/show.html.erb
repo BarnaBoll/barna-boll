@@ -1,0 +1,491 @@
+<% content_for :title, "Profil – #{current_user.name || current_user.email}" %>
+<% content_for :meta_description, "Hantera din Barnaboll-profil." %>
+
+<div class="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-50">
+  <div class="max-w-5xl mx-auto px-4 py-8 space-y-6">
+
+    <!-- Header -->
+    <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <% initials =
+             if @user.name.present?
+               @user.name.split.map { |p| p[0] }.join.first(2).upcase
+             else
+               @user.email.to_s[0].to_s.upcase
+             end %>
+
+        <div class="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-tr from-orange-400 to-pink-500 flex items-center justify-center text-sm font-semibold text-slate-950 border border-slate-800/60">
+          <%= initials %>
+        </div>
+
+        <div>
+          <p class="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-orange-300 mb-1">
+            <span class="h-1 w-1 rounded-full bg-orange-400"></span>
+            Profil
+          </p>
+
+          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+            <%= @user.name.presence || "Ditt konto" %>
+          </h1>
+
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            <span class="font-mono text-slate-300"><%= @user.email %></span>
+            <% if @user.confirmed? %>
+              <span class="ml-2 rounded-full border border-emerald-500/50 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                E-post bekräftad
+              </span>
+            <% else %>
+              <span class="ml-2 rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-200">
+                Väntar på bekräftelse
+              </span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <%= button_to "Logga ut",
+          destroy_user_session_path,
+          method: :delete,
+          class: "inline-flex items-center justify-center rounded-full px-4 py-1.5 text-[11px] font-semibold border border-slate-600/70 text-slate-200 hover:border-pink-400 hover:bg-slate-900/60 transition" %>
+      </div>
+    </section>
+
+    <!-- Errors for profile (name/email/password) -->
+    <% if @user.errors.any? %>
+      <section class="rounded-2xl border border-rose-900/70 bg-rose-950/40 p-3 text-xs text-rose-100">
+        <p class="font-semibold mb-1">Vi kunde inte spara dina ändringar:</p>
+        <ul class="list-disc list-inside space-y-0.5">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
+    <!-- Account + Security -->
+    <section class="grid gap-4 lg:grid-cols-[1.5fr_1.3fr]">
+
+      <!-- Account details -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <h2 class="text-base font-semibold mb-1">Kontouppgifter</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Uppdatera ditt namn. Din e-post kan inte ändras än.
+        </p>
+
+        <%= form_with model: @user, url: profile_path, method: :patch, local: true do |f| %>
+          <div class="space-y-3">
+            <!-- Name -->
+            <div>
+              <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                Namn
+              </label>
+              <%= f.text_field :name,
+                class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                placeholder: "Ditt namn" %>
+            </div>
+
+            <!-- Email (read-only) -->
+            <div>
+              <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                E-post
+              </label>
+              <input type="email"
+                     value="<%= @user.email %>"
+                     disabled
+                     class="w-full rounded-xl border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm text-slate-400 cursor-not-allowed" />
+              <p class="text-[10px] text-slate-500 mt-1">
+                Ändring av e-post kommer senare.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 flex justify-end">
+            <%= f.submit "Spara ändringar",
+              class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg hover:from-orange-300 hover:to-pink-400 transition" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Security (button to open modal) -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <h2 class="text-base font-semibold mb-1">Säkerhet</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Byt lösenord när du vill. Vi kräver ditt nuvarande lösenord för att bekräfta att det är du.
+        </p>
+
+        <button
+          type="button"
+          id="open-password-modal"
+          class="inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] sm:text-xs font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition"
+        >
+          Uppdatera lösenord…
+        </button>
+      </div>
+    </section>
+
+    <!-- Password modal (markup lives here, visually overlays via fixed positioning) -->
+    <div id="password-modal"
+         class="fixed inset-0 w-screen h-screen z-50 hidden opacity-0 pointer-events-none transition-opacity duration-300">
+      <!-- Overlay with softer gradient blur -->
+      <div class="fixed inset-0 w-screen h-screen bg-gradient-to-br from-black/80 via-slate-950/70 to-black/80 backdrop-blur-md transition-opacity duration-300"
+           data-modal-dismiss></div>
+
+      <!-- Centered modal -->
+      <div class="absolute inset-0 flex items-center justify-center px-4">
+        <div id="password-modal-content"
+             class="w-full max-w-md rounded-2xl border border-slate-700/70 bg-slate-950 p-5 shadow-xl scale-95 opacity-0 transition-all duration-300">
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-slate-100">
+              Uppdatera lösenord
+            </h3>
+            <button type="button"
+                    class="text-slate-400 hover:text-slate-200 text-sm"
+                    data-modal-dismiss>
+              ✕
+            </button>
+          </div>
+
+          <!-- Body -->
+          <p class="text-xs text-slate-400 mb-4">
+            För att ändra ditt lösenord behöver du ange ditt nuvarande lösenord och sedan välja ett nytt.
+          </p>
+
+          <%= form_with model: @user,
+                        url: update_password_profile_path,
+                        method: :post,
+                        local: true do |f| %>
+            <div class="space-y-3 text-sm">
+              <!-- Current password -->
+              <div>
+                <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                  Nuvarande lösenord
+                </label>
+                <div class="relative">
+                  <%= f.password_field :current_password,
+                                       autocomplete: "current-password",
+                                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 pr-9 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                                       placeholder: "Ditt nuvarande lösenord" %>
+                  <button type="button"
+                          class="absolute inset-y-0 right-2 flex items-center text-slate-500 hover:text-slate-200"
+                          data-toggle-password>
+                    <span class="sr-only">Visa/dölj lösenord</span>
+                    <%= image_tag "icons/eye-off.svg",
+                                  alt: "",
+                                  class: "h-4 w-4",
+                                  data: { password_icon_visible: true } %>
+                    <%= image_tag "icons/eye.svg",
+                                  alt: "",
+                                  class: "h-4 w-4 hidden",
+                                  data: { password_icon_hidden: true } %>
+                  </button>
+                </div>
+              </div>
+
+              <!-- New password -->
+              <div>
+                <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                  Nytt lösenord
+                </label>
+                <div class="relative">
+                  <%= f.password_field :password,
+                                       autocomplete: "new-password",
+                                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 pr-9 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                                       placeholder: "Minst 6 tecken" %>
+                  <button type="button"
+                          class="absolute inset-y-0 right-2 flex items-center text-slate-500 hover:text-slate-200"
+                          data-toggle-password>
+                    <span class="sr-only">Visa/dölj lösenord</span>
+                    <%= image_tag "icons/eye-off.svg",
+                                  alt: "",
+                                  class: "h-4 w-4",
+                                  data: { password_icon_visible: true } %>
+                    <%= image_tag "icons/eye.svg",
+                                  alt: "",
+                                  class: "h-4 w-4 hidden",
+                                  data: { password_icon_hidden: true } %>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Confirm password -->
+              <div>
+                <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                  Bekräfta nytt lösenord
+                </label>
+                <div class="relative">
+                  <%= f.password_field :password_confirmation,
+                                       autocomplete: "new-password",
+                                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 pr-9 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                                       placeholder: "Skriv nytt lösenord igen" %>
+                  <button type="button"
+                          class="absolute inset-y-0 right-2 flex items-center text-slate-500 hover:text-slate-200"
+                          data-toggle-password>
+                    <span class="sr-only">Visa/dölj lösenord</span>
+                    <%= image_tag "icons/eye-off.svg",
+                                  alt: "",
+                                  class: "h-4 w-4",
+                                  data: { password_icon_visible: true } %>
+                    <%= image_tag "icons/eye.svg",
+                                  alt: "",
+                                  class: "h-4 w-4 hidden",
+                                  data: { password_icon_hidden: true } %>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-[10px] text-slate-500 mt-3">
+              Av säkerhetsskäl kräver vi ditt nuvarande lösenord för att ändra till ett nytt.
+            </p>
+
+            <div class="mt-4 flex justify-end gap-3">
+              <button type="button"
+                      class="text-[11px] text-slate-400 hover:text-slate-200"
+                      data-modal-dismiss>
+                Avbryt
+              </button>
+
+              <%= f.submit "Spara nytt lösenord",
+                           class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg hover:from-orange-300 hover:to-pink-400 transition" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced account controls / delete -->
+    <section class="so-card text-sm mt-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1.5">
+        <div>
+          <h2 class="text-base font-semibold">Account deletion</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Permanently delete your account and all associated data.
+          </p>
+        </div>
+
+        <!-- Trigger -->
+        <button
+          type="button"
+          id="open-delete-account-modal"
+          class="inline-flex items-center gap-1 rounded-full border border-slate-700/80 px-3 py-1.5 font-semibold text-slate-100 hover:border-rose-500/80 hover:bg-slate-900/60 transition text-[11px]"
+        >
+          Delete my account…
+        </button>
+      </div>
+
+      <p class="text-[10px] text-slate-500">
+        This action is permanent and cannot be undone.
+      </p>
+    </section>
+
+    <!-- Delete Account Modal -->
+    <div id="delete-account-modal"
+         class="fixed inset-0 w-screen h-screen z-50 hidden opacity-0 pointer-events-none transition-opacity duration-300">
+      <!-- OVERLAY with softer blur gradient -->
+      <div class="fixed inset-0 w-screen h-screen bg-gradient-to-br from-black/85 via-slate-950/70 to-black/85 backdrop-blur-md transition-opacity duration-300"
+           data-modal-dismiss></div>
+
+      <!-- MODAL CONTAINER -->
+      <div class="absolute inset-0 flex items-center justify-center px-4">
+        <div id="delete-modal-content"
+             class="w-full max-w-md rounded-2xl border border-slate-700/70 bg-slate-950 p-5 shadow-xl scale-95 opacity-0 transition-all duration-300">
+
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-slate-100">Confirm account deletion</h3>
+
+            <button type="button"
+                    class="text-slate-400 hover:text-slate-200 text-sm"
+                    data-modal-dismiss>
+              ✕
+            </button>
+          </div>
+
+          <!-- Body -->
+          <p class="text-xs text-slate-300 mb-3">
+            Deleting your account will remove:
+          </p>
+
+          <ul class="text-xs text-slate-400 list-disc list-inside space-y-0.5 mb-4">
+            <li>Your profile</li>
+            <li>Your preferences</li>
+            <li>All stored data tied to your account</li>
+          </ul>
+
+          <p class="text-xs text-rose-300 mb-4 font-semibold">
+            This cannot be undone.
+          </p>
+
+          <!-- Footer -->
+          <div class="flex items-center justify-between mt-4">
+            <button type="button"
+                    class="text-[11px] text-slate-400 hover:text-slate-200"
+                    data-modal-dismiss>
+              Keep my account
+            </button>
+
+            <%= button_to "Delete permanently",
+                          profile_path,
+                          method: :delete,
+                          form: { data: { turbo_confirm: "Are you absolutely sure? This cannot be reversed." } },
+                          class: "delete-shake-btn rounded-full border border-rose-500/80 px-3 py-1.5 text-[11px] font-semibold text-rose-200 hover:bg-rose-900/40 transition" %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Centered success overlay (for flash[:notice]) -->
+    <div id="profile-success-overlay"
+         class="fixed inset-0 z-40 hidden items-center justify-center">
+      <div class="flex items-center justify-center w-full h-full">
+        <div class="rounded-2xl border border-emerald-400/60 bg-slate-950/95 px-6 py-4 text-center shadow-xl shadow-emerald-900/40">
+          <p class="text-sm font-semibold text-emerald-300" id="profile-success-text">
+            <%= flash[:notice].to_s %>
+          </p>
+          <p class="mt-1 text-xs text-slate-400">
+            Ändringen sparades.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* Fade-in keyframes */
+  @keyframes fadeInSlow {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Fade-out */
+  @keyframes fadeOutSlow {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  /* Zoom-in modal */
+  @keyframes modalZoomIn {
+    0%   { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1);    opacity: 1; }
+  }
+
+  /* Shake on hover */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%  { transform: translateX(-3px); }
+    40%  { transform: translateX(3px); }
+    60%  { transform: translateX(-2px); }
+    80%  { transform: translateX(2px); }
+  }
+
+  .delete-shake-btn:hover {
+    animation: shake 0.35s ease-in-out;
+  }
+</style>
+
+<script>
+  function setupPasswordToggles() {
+    document.querySelectorAll("[data-toggle-password]").forEach(function(button) {
+      if (button.dataset.hasPasswordToggle === "true") return;
+      button.dataset.hasPasswordToggle = "true";
+
+      button.addEventListener("click", function () {
+        var input = button.previousElementSibling;
+        if (!input || (input.tagName !== "INPUT" && input.tagName !== "TEXTAREA")) {
+          // Try within same wrapper if previousElementSibling isn't the input
+          input = button.parentElement.querySelector("input[type='password'], input[type='text']");
+        }
+        if (!input) return;
+
+        var isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+
+        var visibleIcon = button.querySelector("[data-password-icon-visible]");
+        var hiddenIcon  = button.querySelector("[data-password-icon-hidden]");
+
+        if (visibleIcon && hiddenIcon) {
+          if (isPassword) {
+            visibleIcon.classList.add("hidden");
+            hiddenIcon.classList.remove("hidden");
+          } else {
+            visibleIcon.classList.remove("hidden");
+            hiddenIcon.classList.add("hidden");
+          }
+        }
+      });
+    });
+  }
+
+  function setupModal(openId, modalId, contentId) {
+    var openBtn = document.getElementById(openId);
+    var modal   = document.getElementById(modalId);
+    var content = document.getElementById(contentId);
+    if (!openBtn || !modal || !content) return;
+
+    // avoid double-binding when initProfilePageUI runs multiple times
+    if (openBtn.dataset.modalBound === "true") return;
+    openBtn.dataset.modalBound = "true";
+
+    function openModal() {
+      modal.classList.remove("hidden", "pointer-events-none");
+      modal.style.opacity = "1";
+      modal.style.animation = "fadeInSlow 0.25s ease-out";
+      content.style.animation = "modalZoomIn 0.25s ease-out forwards";
+    }
+
+    function closeModal() {
+      modal.style.animation = "fadeOutSlow 0.25s ease-in";
+      modal.style.opacity = "0";
+      modal.classList.add("pointer-events-none");
+      setTimeout(function() {
+        modal.classList.add("hidden");
+      }, 260);
+    }
+
+    openBtn.addEventListener("click", openModal);
+
+    modal.querySelectorAll("[data-modal-dismiss]").forEach(function(el) {
+      el.addEventListener("click", closeModal);
+    });
+  }
+
+  function setupSuccessOverlay() {
+    var overlay = document.getElementById("profile-success-overlay");
+    var textEl  = document.getElementById("profile-success-text");
+    if (!overlay || !textEl) return;
+
+    var message = (textEl.textContent || "").trim();
+    if (message === "") return;
+
+    overlay.classList.remove("hidden");
+    overlay.style.display = "flex";
+    overlay.style.animation = "fadeInSlow 0.25s ease-out";
+
+    setTimeout(function() {
+      overlay.style.animation = "fadeOutSlow 0.3s ease-in";
+      setTimeout(function() {
+        overlay.classList.add("hidden");
+        overlay.style.display = "none";
+      }, 320);
+    }, 1600);
+  }
+
+  function initProfilePageUI() {
+    setupPasswordToggles();
+    setupModal("open-password-modal", "password-modal", "password-modal-content");
+    setupModal("open-delete-account-modal", "delete-account-modal", "delete-modal-content");
+    setupSuccessOverlay();
+  }
+
+  // Initial page load (non-Turbo)
+  document.addEventListener("DOMContentLoaded", initProfilePageUI);
+  // Turbo visits (GET + redirects)
+  document.addEventListener("turbo:load", initProfilePageUI);
+  // Turbo form responses like 422 Unprocessable Entity
+  document.addEventListener("turbo:render", initProfilePageUI);
+</script>

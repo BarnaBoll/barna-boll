@@ -5,6 +5,10 @@ Rails.application.routes.draw do
 
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
 
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
   # Legal
   get "about",   to: "pages#about"
   get "privacy", to: "pages#privacy"

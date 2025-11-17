@@ -1,22 +1,35 @@
-<div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color:#020617; color:#e2e8f0; padding:24px;">
-  <div style="max-width:480px;margin:0 auto;border-radius:18px;border:1px solid #1f2937;background:#020617;padding:24px;">
-    <h1 style="font-size:18px;margin:0 0 12px;color:#f9fafb;">Unlock your account</h1>
+<div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#020617; color:#e2e8f0; padding:24px;">
+  <div style="max-width:480px;margin:0 auto;border-radius:20px;border:1px solid #1f2937;background:#020617;padding:32px;">
+
+    <h1 style="font-size:20px;margin:0 0 12px;color:#f9fafb;">Lås upp ditt konto</h1>
 
     <p style="font-size:14px;margin:0 0 12px;">
-      Hello <strong><%= @resource.email %></strong>,
-    </p>
-    <p style="font-size:14px;margin:0 0 12px;">
-      Your account has been locked due to multiple unsuccessful sign in attempts.
+      Hej <strong><%= @resource.email %></strong>,
     </p>
 
-    <p style="margin:0 0 20px;">
-      <%= link_to "Unlock my account",
+    <p style="font-size:14px;margin:0 0 20px;">
+      Ditt konto har låsts efter flera misslyckade inloggningsförsök.
+      Klicka på knappen nedan för att låsa upp det.
+    </p>
+
+    <div style="text-align:center;margin-bottom:30px;">
+      <%= link_to "Lås upp konto",
                   unlock_url(@resource, unlock_token: @token),
-                  style: "display:inline-block;padding:10px 18px;border-radius:999px;background:linear-gradient(to right,#fb923c,#ec4899);color:#020617;font-size:13px;font-weight:600;text-decoration:none;" %>
-    </p>
+                  style: "
+                    display:inline-block;
+                    padding:12px 22px;
+                    border-radius:999px;
+                    background:linear-gradient(to right,#fb923c,#ec4899);
+                    color:#020617;
+                    font-size:14px;
+                    font-weight:600;
+                    text-decoration:none;
+                  " %>
+    </div>
 
     <p style="font-size:12px;color:#94a3b8;margin:0;">
-      If you didn’t try to sign in, we recommend changing your password once unlocked.
+      Om det inte var du som försökte logga in rekommenderar vi att du byter lösenord efter upplåsning.
     </p>
+
   </div>
 </div>

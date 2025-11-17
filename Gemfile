@@ -42,7 +42,7 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
-gem "letter_opener", group: :development
+
 gem "devise"
 
 group :development, :test do
@@ -57,6 +57,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem "letter_opener", group: :development
+  gem "letter_opener_web", group: :development
 end
 
 group :development do

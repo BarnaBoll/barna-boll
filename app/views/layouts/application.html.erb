@@ -1,35 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Barnaboll" %></title>
+    <meta charset="utf-8">
+
+    <title>
+      <%= content_for?(:title) ? yield(:title) : "Barnaboll" %>
+    </title>
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Barnaboll">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <%# ---------- Basic SEO meta ---------- %>
+    <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : 'Barnaboll is your hub for organizing and managing kids\' sports activities.' %>">
+    <meta name="keywords" content="Barnaboll, kids sports, youth football, activities, scheduling, parents, teams">
+
+    <%# Canonical URL (can be overridden per page) %>
+    <link rel="canonical" href="<%= content_for?(:canonical_url) ? yield(:canonical_url) : request.original_url %>">
+
+    <%# ---------- Open Graph (Facebook / LinkedIn / etc.) ---------- %>
+    <meta property="og:site_name" content="Barnaboll">
+    <meta property="og:title" content="<%= content_for?(:og_title) ? yield(:og_title) : (content_for?(:title) ? yield(:title) : 'Barnaboll') %>">
+    <meta property="og:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:meta_description) ? yield(:meta_description) : 'Barnaboll is your hub for organizing and managing kids\' sports activities.') %>">
+    <meta property="og:type" content="<%= content_for?(:og_type) ? yield(:og_type) : 'website' %>">
+    <meta property="og:url" content="<%= content_for?(:og_url) ? yield(:og_url) : request.original_url %>">
+    <meta property="og:image" content="<%= content_for?(:og_image) ? yield(:og_image) : asset_path('barnaboll_logo.jpg') %>">
+
+    <%# ---------- Twitter Cards ---------- %>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for?(:twitter_title) ? yield(:twitter_title) : (content_for?(:og_title) ? yield(:og_title) : (content_for?(:title) ? yield(:title) : 'Barnaboll')) %>">
+    <meta name="twitter:description" content="<%= content_for?(:twitter_description) ? yield(:twitter_description) : (content_for?(:og_description) ? yield(:og_description) : (content_for?(:meta_description) ? yield(:meta_description) : 'Barnaboll is your hub for organizing and managing kids\' sports activities.')) %>">
+    <meta name="twitter:image" content="<%= content_for?(:twitter_image) ? yield(:twitter_image) : (content_for?(:og_image) ? yield(:og_image) : asset_path('barnaboll_logo.jpg')) %>">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%# PWA manifest %>
+    <link rel="manifest" href="/manifest.json">
+
+    <%# Page-specific extra tags / scripts %>
     <%= yield :head %>
 
-    <link rel="manifest" href="/manifest.json">
+    <%# Icons %>
     <link rel="icon" href="<%= asset_path('barnaboll_logo.jpg') %>" type="image/jpeg">
     <link rel="apple-touch-icon" href="<%= asset_path('barnaboll_logo.jpg') %>">
 
+    <%# Styles %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+    <%# JS (importmap) %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-slate-950 text-slate-50">
+  <body class="bg-slate-950 text-slate-50 min-h-screen flex flex-col">
     <%= render "shared/top_nav" %>
 
-    <!-- Main content wrapper (no extra padding; header is sticky, not fixed) -->
-    <div>
-      <%= render "shared/alerts" %>
+    <%= render "shared/alerts" %>
 
-      <main>
-        <%= yield %>
-      </main>
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full">
+      <%= yield %>
+    </main>
 
-      <%= render "shared/footer" %>
-    </div>
+    <%= render "shared/footer" %>
+
   </body>
 </html>

@@ -126,21 +126,26 @@
 </header>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggle = document.getElementById("mobile-nav-toggle");
-    const menu   = document.getElementById("mobile-nav");
+  // Works with Turbo: fires on every Turbo page load, not just first full load
+  document.addEventListener("turbo:load", function () {
+    var toggle = document.getElementById("mobile-nav-toggle");
+    var menu   = document.getElementById("mobile-nav");
 
     if (!toggle || !menu) return;
 
-    toggle.addEventListener("click", function () {
-      const isHidden = menu.classList.contains("hidden");
+    // Avoid multiple event bindings when Turbo swaps the DOM:
+    var newToggle = toggle.cloneNode(true);
+    toggle.parentNode.replaceChild(newToggle, toggle);
+
+    newToggle.addEventListener("click", function () {
+      var isHidden = menu.classList.contains("hidden");
 
       if (isHidden) {
         menu.classList.remove("hidden");
-        toggle.classList.add("text-orange-300");
+        newToggle.classList.add("text-orange-300");
       } else {
         menu.classList.add("hidden");
-        toggle.classList.remove("text-orange-300");
+        newToggle.classList.remove("text-orange-300");
       }
     });
   });

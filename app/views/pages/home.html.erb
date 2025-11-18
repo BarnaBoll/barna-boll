@@ -1,6 +1,11 @@
 <% content_for :title, "Barnaboll – Fotboll som den ska spelas" %>
 <% content_for :meta_description, "Barnaboll är en fotbollscommunity för spelare som vill ha tempo, nivå och gemenskap. Winner-stays-on-sessioner i Malmö, Uppsala, Stockholm & Göteborg." %>
 
+<%
+  # Build a simple hash of "city name (downcased)" => hex color from admin
+  city_colors = (@city_colors || {}).transform_keys { |k| k.to_s.downcase }
+%>
+
 <div class="min-h-[calc(100vh-5rem)] flex flex-col bg-slate-950 text-slate-50">
 
   <!-- Hero -->
@@ -81,12 +86,23 @@
               ["Stockholm", "Fredagsfotboll"],
               ["Göteborg", "Ny stad · nya lirare"]
             ].each do |city, tagline| %>
-              <div class="flex items-center justify-between rounded-2xl bg-slate-900/80 border border-slate-800 px-3 py-2.5">
+              <% raw_color = city_colors[city.downcase].to_s.strip %>
+              <% if raw_color.present? && raw_color.start_with?("#") %>
+                <% card_style  = "background-image: linear-gradient(135deg, #{raw_color}33, #{raw_color}08); border-color: #{raw_color}66;" %>
+                <% badge_style = "background-color: #{raw_color}1a; color: #{raw_color}; border-color: #{raw_color}80;" %>
+              <% else %>
+                <% card_style  = nil %>
+                <% badge_style = nil %>
+              <% end %>
+
+              <div class="flex items-center justify-between rounded-2xl bg-slate-900/80 border border-slate-800 px-3 py-2.5"
+                   style="<%= card_style %>">
                 <div>
                   <p class="font-semibold text-slate-50"><%= city %></p>
                   <p class="text-[11px] text-slate-400"><%= tagline %></p>
                 </div>
-                <span class="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 text-orange-300 font-medium border border-orange-400/50">
+                <span class="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 text-orange-300 font-medium border border-orange-400/50"
+                      style="<%= badge_style %>">
                   Platser kvar
                 </span>
               </div>
@@ -120,7 +136,15 @@
           ["Stockholm", "Fredagsfotboll när den är som bäst."],
           ["Göteborg", "Resan fortsätter – nyaste tillskottet i BARNA-familjen."]
         ].each do |city, copy| %>
-          <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+          <% raw_color = city_colors[city.downcase].to_s.strip %>
+          <% if raw_color.present? && raw_color.start_with?("#") %>
+            <% card_style = "background-image: linear-gradient(135deg, #{raw_color}22, #{raw_color}05); border-color: #{raw_color}55;" %>
+          <% else %>
+            <% card_style = nil %>
+          <% end %>
+
+          <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4"
+               style="<%= card_style %>">
             <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-1">
               Stad
             </p>

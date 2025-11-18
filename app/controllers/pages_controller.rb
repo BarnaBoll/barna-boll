@@ -1,5 +1,7 @@
 class PagesController < ApplicationController
-  def home; end
+  def home
+    @city_colors = City.pluck(:name, :color).to_h
+  end
 
   def about; end
   def privacy; end

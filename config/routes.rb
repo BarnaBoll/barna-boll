@@ -28,6 +28,8 @@ Rails.application.routes.draw do
   get "business", to: "pages#business"
   get "help",     to: "pages#help"
 
+  get "calendar", to: "matches#calendar", as: :calendar
+
   # Admin pages
   namespace :admin do
     root "dashboard#index"

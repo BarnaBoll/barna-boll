@@ -4,7 +4,6 @@ class MatchesController < ApplicationController
   def schedule
     @cities = City.order(:name)
 
-    # now includes list view
     @view = params[:view].in?(%w[week month list]) ? params[:view] : "month"
 
     @selected_city =
@@ -16,7 +15,6 @@ class MatchesController < ApplicationController
         end
       end
 
-    # Used to color the closed <select> label
     @selected_city_color =
       if @selected_city
         @selected_city.try(:accent_color).presence ||
@@ -46,7 +44,6 @@ class MatchesController < ApplicationController
       @start_date = reference_date.beginning_of_week(:monday)
       @end_date   = @start_date + 6.days
     when "list"
-      # rolling 14-day window
       @start_date = reference_date
       @end_date   = reference_date + 13.days
     else # "month"
@@ -55,5 +52,14 @@ class MatchesController < ApplicationController
     end
 
     @matches_by_date = scope.where(date: @start_date..@end_date).group_by(&:date)
+
+    @user_teams =
+      if user_signed_in?
+        current_user.user_teams
+                   .includes(:members)
+                   .order(:name)
+      else
+        UserTeam.none
+      end
   end
 end

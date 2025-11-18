@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_18_112126) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_18_191707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -73,8 +73,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_18_112126) do
     t.integer "team_size", default: 1, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.bigint "user_team_id"
     t.index ["team_id"], name: "index_registrations_on_team_id"
     t.index ["user_id"], name: "index_registrations_on_user_id"
+    t.index ["user_team_id"], name: "index_registrations_on_user_team_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -85,6 +87,25 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_18_112126) do
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["match_id"], name: "index_teams_on_match_id"
+  end
+
+  create_table "user_team_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "user_team_id", null: false
+    t.index ["user_id", "user_team_id"], name: "index_user_team_memberships_on_user_id_and_user_team_id", unique: true
+    t.index ["user_id"], name: "index_user_team_memberships_on_user_id"
+    t.index ["user_team_id"], name: "index_user_team_memberships_on_user_team_id"
+  end
+
+  create_table "user_teams", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "creator_id", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_user_teams_on_creator_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -122,6 +143,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_18_112126) do
   add_foreign_key "player_stats", "locations"
   add_foreign_key "player_stats", "users"
   add_foreign_key "registrations", "teams"
+  add_foreign_key "registrations", "user_teams"
   add_foreign_key "registrations", "users"
   add_foreign_key "teams", "matches"
+  add_foreign_key "user_team_memberships", "user_teams"
+  add_foreign_key "user_team_memberships", "users"
+  add_foreign_key "user_teams", "users", column: "creator_id"
 end

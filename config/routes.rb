@@ -9,6 +9,14 @@ Rails.application.routes.draw do
     post :update_password
   end
 
+  # Teams (user-created squads)
+  resources :user_teams do
+    member do
+      post :add_member
+      delete "remove_member/:user_id", action: :remove_member, as: :remove_member
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
@@ -28,7 +36,8 @@ Rails.application.routes.draw do
   get "business", to: "pages#business"
   get "help",     to: "pages#help"
 
-  get "calendar", to: "matches#calendar", as: :calendar
+  get "schedule", to: "matches#schedule", as: :schedule
+  resources :registrations, only: [ :create ]
 
   # Admin pages
   namespace :admin do

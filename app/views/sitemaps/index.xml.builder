@@ -7,7 +7,7 @@ xml.urlset xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9" do
 
   public_pages = [
     [ root_url,        "weekly",  "1.0" ],
-    [ calendar_url,    "daily",   "0.9" ],
+    [ schedule_url,    "daily",   "0.9" ],
     [ about_url,       "monthly", "0.7" ],
     [ features_url,    "monthly", "0.8" ],
     [ business_url,    "monthly", "0.7" ],

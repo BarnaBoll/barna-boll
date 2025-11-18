@@ -1,6 +1,7 @@
 class MatchesController < ApplicationController
-  # Public calendar – no authentication
-  def calendar
+  # Public schedule – no authentication
+
+  def schedule
     @cities = City.order(:name)
 
     # now includes list view

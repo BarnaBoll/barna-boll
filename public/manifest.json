@@ -1,0 +1,37 @@
+{
+  "id": "/",
+  "name": "Barnaboll – Fotboll som den ska spelas",
+  "short_name": "Barnaboll",
+  "lang": "sv-SE",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "description": "Barnaboll är en fotbollscommunity för spelare som vill ha tempo, nivå och gemenskap. Winner-stays-on-sessioner i Malmö, Uppsala, Stockholm & Göteborg.",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "social"],
+  "shortcuts": [
+    {
+      "name": "Highlights",
+      "short_name": "Highlights",
+      "description": "Se highlights från Barna Cupen och sessions.",
+      "url": "/#highlights"
+    },
+    {
+      "name": "Så funkar det",
+      "short_name": "Så funkar det",
+      "description": "Läs mer om hur Barnaboll fungerar.",
+      "url": "/#how-it-works"
+    }
+  ]
+}

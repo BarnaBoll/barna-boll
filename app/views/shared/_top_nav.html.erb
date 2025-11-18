@@ -124,29 +124,3 @@
     </div>
   </nav>
 </header>
-
-<script>
-  // Works with Turbo: fires on every Turbo page load, not just first full load
-  document.addEventListener("turbo:load", function () {
-    var toggle = document.getElementById("mobile-nav-toggle");
-    var menu   = document.getElementById("mobile-nav");
-
-    if (!toggle || !menu) return;
-
-    // Avoid multiple event bindings when Turbo swaps the DOM:
-    var newToggle = toggle.cloneNode(true);
-    toggle.parentNode.replaceChild(newToggle, toggle);
-
-    newToggle.addEventListener("click", function () {
-      var isHidden = menu.classList.contains("hidden");
-
-      if (isHidden) {
-        menu.classList.remove("hidden");
-        newToggle.classList.add("text-orange-300");
-      } else {
-        menu.classList.add("hidden");
-        newToggle.classList.remove("text-orange-300");
-      }
-    });
-  });
-</script>

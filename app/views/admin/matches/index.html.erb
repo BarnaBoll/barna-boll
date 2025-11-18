@@ -1,0 +1,89 @@
+<% content_for :title, "Admin – Matcher" %>
+<% content_for :meta_description, "Lista och hantering av matcher i Barnaboll admin." %>
+
+<div class="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-50">
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-orange-300 mb-1">
+          Admin · Matcher
+        </p>
+        <h1 class="text-2xl font-semibold tracking-tight">Matcher</h1>
+        <p class="text-sm text-slate-400">
+          Hantera alla planerade matcher i alla städer och på alla platser.
+        </p>
+      </div>
+
+      <%= link_to "Ny match",
+                  new_admin_match_path,
+                  class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition" %>
+    </header>
+
+    <% if @matches.any? %>
+      <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/70">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-950/80 border-b border-slate-800 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+            <tr>
+              <th class="px-4 py-3 text-left">Titel</th>
+              <th class="px-4 py-3 text-left">Stad</th>
+              <th class="px-4 py-3 text-left">Plats</th>
+              <th class="px-4 py-3 text-left">Datum</th>
+              <th class="px-4 py-3 text-left">Pris</th>
+              <th class="px-4 py-3 text-right">Spelare (bokade / max)</th>
+              <th class="px-4 py-3 text-right">Åtgärder</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <% @matches.each do |match| %>
+              <tr>
+                <td class="px-4 py-3 align-top">
+                  <%= link_to match.title,
+                              admin_match_path(match),
+                              class: "text-slate-100" %>
+                </td>
+                <td class="px-4 py-3 align-top text-xs text-slate-300">
+                  <%= match.city.name %>
+                </td>
+                <td class="px-4 py-3 align-top text-xs text-slate-300">
+                  <%= match.location.name %>
+                </td>
+                <td class="px-4 py-3 align-top text-xs text-slate-300">
+                  <% if match.date %>
+                    <%= l(match.date, format: :short) %>
+                  <% end %>
+                  <% if match.time %>
+                    · <%= match.time.strftime("%H:%M") %>
+                  <% end %>
+                </td>
+                <td class="px-4 py-3 align-top text-xs text-slate-300">
+                  <%= match.price.present? ? "#{match.price.to_i} kr" : "–" %>
+                </td>
+                <td class="px-4 py-3 align-top text-right text-xs text-slate-300">
+                  <% booked = match.total_players %>
+                  <%= booked %> / <%= match.hard_limit_total %>
+                </td>
+                <td class="px-4 py-3 align-top">
+                  <div class="flex justify-end gap-2">
+                    <%= link_to "Visa",
+                                admin_match_path(match),
+                                class: "text-[11px] rounded-full border border-slate-700 px-3 py-1 hover:border-orange-400" %>
+                    <%= link_to "Redigera",
+                                edit_admin_match_path(match),
+                                class: "text-[11px] rounded-full border border-slate-700 px-3 py-1 hover:border-orange-400" %>
+                    <%= button_to "Ta bort",
+                                  admin_match_path(match),
+                                  method: :delete,
+                                  data: { confirm: "Är du säker på att du vill ta bort den här matchen?" },
+                                  class: "text-[11px] rounded-full border border-red-500/60 px-3 py-1 text-red-300 hover:bg-red-500/10" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-sm text-slate-400">Inga matcher hittades ännu.</p>
+    <% end %>
+  </div>
+</div>

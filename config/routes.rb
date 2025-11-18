@@ -28,8 +28,14 @@ Rails.application.routes.draw do
   get "business", to: "pages#business"
   get "help",     to: "pages#help"
 
+  # Admin pages
   namespace :admin do
     root "dashboard#index"
+
+    resources :cities do
+      resources :locations
+    end
+    resources :matches
 
     resources :users do
       member do

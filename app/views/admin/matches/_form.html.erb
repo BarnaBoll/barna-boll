@@ -1,0 +1,123 @@
+<%= form_with model: [:admin, @match], class: "space-y-4" do |f| %>
+  <% if @match.errors.any? %>
+    <div class="rounded-2xl border border-red-500/60 bg-red-500/10 p-3 text-xs text-red-100">
+      <p class="font-semibold mb-1">Kunde inte spara matchen:</p>
+      <ul class="list-disc list-inside">
+        <% @match.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Titel
+      </label>
+      <%= f.text_field :title,
+                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Pris (SEK)
+      </label>
+      <%= f.number_field :price,
+                         step: 1,
+                         class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+      Beskrivning
+    </label>
+    <%= f.text_area :description,
+                    rows: 3,
+                    class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Datum
+      </label>
+      <%= f.date_field :date,
+                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Tid
+      </label>
+      <%= f.time_field :time,
+                       class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Stad
+      </label>
+      <%= f.collection_select :city_id,
+                              @cities,
+                              :id,
+                              :name,
+                              { prompt: "Välj stad" },
+                              class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+    </div>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Plats
+      </label>
+      <%= f.collection_select :location_id,
+                              Location.includes(:city).order("cities.name, locations.name"),
+                              :id,
+                              :name_with_city,
+                              { prompt: "Välj plats" },
+                              class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      <p class="mt-1 text-[11px] text-slate-500">
+        (Platsen måste tillhöra samma stad – valideras automatiskt.)
+      </p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3">
+      <div>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+          Lag (antal)
+        </label>
+        <%= f.number_field :teams_count,
+                           min: 1,
+                           class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      </div>
+      <div>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+          Soft limit / lag
+        </label>
+        <%= f.number_field :soft_limit_per_team,
+                           min: 1,
+                           class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      </div>
+      <div>
+        <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+          Hard limit totalt
+        </label>
+        <%= f.number_field :hard_limit_total,
+                           min: 1,
+                           class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex gap-3 pt-2">
+    <%= f.submit(@match.new_record? ? "Skapa match" : "Uppdatera match",
+                 class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400 transition") %>
+
+    <%= link_to "Avbryt",
+                @match.new_record? ? admin_matches_path : admin_match_path(@match),
+                class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-slate-700 text-slate-200 hover:border-pink-400 hover:text-pink-300" %>
+  </div>
+<% end %>

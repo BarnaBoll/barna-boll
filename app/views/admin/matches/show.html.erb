@@ -1,0 +1,146 @@
+<% content_for :title, "Admin – #{@match.title}" %>
+<% content_for :meta_description, "Detaljer för matchen #{@match.title}." %>
+
+<div class="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-50">
+  <div class="max-w-5xl mx-auto px-4 py-8 space-y-6">
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-orange-300 mb-1">
+          Admin · Match
+        </p>
+        <h1 class="text-2xl font-semibold tracking-tight">
+          <%= @match.title %>
+        </h1>
+        <p class="text-sm text-slate-400">
+          <%= @match.city.name %> · <%= @match.location.name %>
+        </p>
+        <p class="text-xs text-slate-400 mt-1">
+          <% if @match.date %>
+            <%= l(@match.date, format: :long) %>
+          <% end %>
+          <% if @match.time %>
+            · <%= @match.time.strftime("%H:%M") %>
+          <% end %>
+        </p>
+        <% if @match.price.present? %>
+          <p class="text-xs text-slate-300 mt-1">
+            Pris: <%= @match.price.to_i %> kr
+          </p>
+        <% end %>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2">
+        <%= link_to "Redigera",
+                    edit_admin_match_path(@match),
+                    class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-[11px] sm:text-xs font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition" %>
+
+        <%= button_to "Ta bort",
+                      admin_match_path(@match),
+                      method: :delete,
+                      data: { confirm: "Är du säker på att du vill ta bort den här matchen?" },
+                      class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-red-500/60 text-red-300 hover:bg-red-500/10" %>
+      </div>
+    </header>
+
+    <!-- Summary cards -->
+    <section class="grid gap-4 md:grid-cols-3">
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-1">
+          Lag
+        </p>
+        <p class="text-2xl font-semibold">
+          <%= @match.teams_count %>
+        </p>
+        <p class="text-[11px] text-slate-400 mt-1">
+          Förväntat antal lag i den här sessionen.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-1">
+          Spelare totalt
+        </p>
+        <% booked = @match.total_players %>
+        <p class="text-2xl font-semibold">
+          <%= booked %> / <%= @match.hard_limit_total %>
+        </p>
+        <p class="text-[11px] text-slate-400 mt-1">
+          Bokade platser vs hard limit.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-1">
+          Soft limit / lag
+        </p>
+        <p class="text-2xl font-semibold">
+          <%= @match.soft_limit_per_team %>
+        </p>
+        <p class="text-[11px] text-slate-400 mt-1">
+          Rekommenderat max per lag. Fler kan anmäla sig men roteras in.
+        </p>
+      </div>
+    </section>
+
+    <!-- Description -->
+    <section class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm space-y-2">
+      <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-[0.18em] mb-1">
+        Beskrivning
+      </h2>
+      <% if @match.description.present? %>
+        <p class="text-sm text-slate-200"><%= @match.description %></p>
+      <% else %>
+        <p class="text-sm text-slate-400">Ingen beskrivning angiven.</p>
+      <% end %>
+    </section>
+
+    <!-- Teams & registrations -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-100">
+          Lag & anmälningar
+        </h2>
+        <p class="text-[11px] text-slate-500">
+          Soft limit per lag: <%= @match.soft_limit_per_team %>
+        </p>
+      </div>
+
+      <% teams = @match.teams.includes(:registrations) %>
+      <% if teams.any? %>
+        <div class="grid gap-4 md:grid-cols-3">
+          <% teams.each do |team| %>
+            <% current = team.current_players %>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-3 text-sm space-y-1">
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-[0.18em]">
+                <%= team.name || "Lag" %>
+              </p>
+              <p class="text-sm text-slate-200">
+                Spelare: <%= current %>
+                <% if team.capacity_hard.present? %>
+                  / <%= team.capacity_hard %>
+                <% end %>
+              </p>
+              <p class="text-[11px] text-slate-500">
+                Soft limit: <%= team.capacity_soft || @match.soft_limit_per_team %>
+              </p>
+              <p class="text-[11px] text-slate-500">
+                Anmälningar: <%= team.registrations.count %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-slate-400">
+          Inga lag har skapats för den här matchen ännu (ska ske automatiskt vid skapande).
+        </p>
+      <% end %>
+    </section>
+
+    <section class="pt-2">
+      <%= link_to "Tillbaka till matcher",
+                  admin_matches_path,
+                  class: "text-[11px] text-slate-400 hover:text-orange-300" %>
+    </section>
+  </div>
+</div>

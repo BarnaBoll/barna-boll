@@ -1,0 +1,28 @@
+<% content_for :title, "Admin – Ny plats i #{@city.name}" %>
+<% content_for :meta_description, "Skapa en ny plats i #{@city.name} för Barnaboll-matcher." %>
+
+<div class="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-50">
+  <div class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <header>
+      <p class="text-[11px] uppercase tracking-[0.2em] text-orange-300 mb-1">
+        Admin · Platser
+      </p>
+      <h1 class="text-2xl font-semibold tracking-tight">
+        Ny plats i <%= @city.name %>
+      </h1>
+      <p class="text-sm text-slate-400">
+        Lägg till en ny hall eller plan där ni spelar i den här staden.
+      </p>
+    </header>
+
+    <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+      <%= render "form" %>
+    </div>
+
+    <div class="pt-2">
+      <%= link_to "Tillbaka till platser",
+                  admin_city_locations_path(@city),
+                  class: "text-[11px] text-slate-400 hover:text-orange-300" %>
+    </div>
+  </div>
+</div>

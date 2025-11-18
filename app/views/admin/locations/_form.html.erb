@@ -1,0 +1,46 @@
+<%= form_with model: [:admin, @city, @location], class: "space-y-4" do |f| %>
+  <% if @location.errors.any? %>
+    <div class="rounded-2xl border border-red-500/60 bg-red-500/10 p-3 text-xs text-red-100">
+      <p class="font-semibold mb-1">Kunde inte spara platsen:</p>
+      <ul class="list-disc list-inside">
+        <% @location.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+      Namn
+    </label>
+    <%= f.text_field :name,
+                     class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+  </div>
+
+  <div>
+    <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+      Adress / hallnamn
+    </label>
+    <%= f.text_field :address,
+                     class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+  </div>
+
+  <div>
+    <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+      Beskrivning
+    </label>
+    <%= f.text_area :description,
+                    rows: 3,
+                    class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+  </div>
+
+  <div class="flex gap-3 pt-2">
+    <%= f.submit(@location.new_record? ? "Skapa plats" : "Uppdatera plats",
+                 class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400 transition") %>
+
+    <%= link_to "Avbryt",
+                @location.new_record? ? admin_city_path(@city) : admin_city_location_path(@city, @location),
+                class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-slate-700 text-slate-200 hover:border-pink-400 hover:text-pink-300" %>
+  </div>
+<% end %>

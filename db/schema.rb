@@ -10,9 +10,82 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_16_165609) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_18_112126) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "cities", force: :cascade do |t|
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.string "slug"
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_cities_on_slug", unique: true
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "address"
+    t.bigint "city_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_locations_on_city_id"
+  end
+
+  create_table "matches", force: :cascade do |t|
+    t.bigint "city_id", null: false
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.text "description"
+    t.integer "hard_limit_total", null: false
+    t.bigint "location_id", null: false
+    t.decimal "price", precision: 8, scale: 2
+    t.integer "soft_limit_per_team", default: 5, null: false
+    t.integer "teams_count", default: 3, null: false
+    t.time "time"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_matches_on_city_id"
+    t.index ["location_id"], name: "index_matches_on_location_id"
+  end
+
+  create_table "player_stats", force: :cascade do |t|
+    t.bigint "city_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "location_id", null: false
+    t.integer "losses", default: 0
+    t.integer "matches_played", default: 0
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "wins", default: 0
+    t.index ["city_id"], name: "index_player_stats_on_city_id"
+    t.index ["location_id"], name: "index_player_stats_on_location_id"
+    t.index ["user_id", "city_id", "location_id"], name: "index_stats_unique", unique: true
+    t.index ["user_id"], name: "index_player_stats_on_user_id"
+  end
+
+  create_table "registrations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "status", default: 0, null: false
+    t.bigint "team_id", null: false
+    t.integer "team_size", default: 1, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["team_id"], name: "index_registrations_on_team_id"
+    t.index ["user_id"], name: "index_registrations_on_user_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.integer "capacity_hard"
+    t.integer "capacity_soft", default: 5
+    t.datetime "created_at", null: false
+    t.bigint "match_id", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_teams_on_match_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
@@ -41,4 +114,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_165609) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
+
+  add_foreign_key "locations", "cities"
+  add_foreign_key "matches", "cities"
+  add_foreign_key "matches", "locations"
+  add_foreign_key "player_stats", "cities"
+  add_foreign_key "player_stats", "locations"
+  add_foreign_key "player_stats", "users"
+  add_foreign_key "registrations", "teams"
+  add_foreign_key "registrations", "users"
+  add_foreign_key "teams", "matches"
 end

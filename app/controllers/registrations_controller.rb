@@ -5,17 +5,8 @@ class RegistrationsController < ApplicationController
     match = Match.find(params[:match_id])
     registration_type = params[:registration_type].to_s
 
-    team = pick_team_for_match(match)
-    unless team
-      redirect_back fallback_location: schedule_path,
-                    alert: "Den här matchen är fullbokad.",
-                    status: :see_other
-      return
-    end
-
+    # If registering as a team, we need the user_team early for validations
     user_team = nil
-    team_size = 1
-
     if registration_type == "team"
       user_team = current_user.user_teams.find_by(id: params[:user_team_id])
 
@@ -25,7 +16,35 @@ class RegistrationsController < ApplicationController
                       status: :see_other
         return
       end
+    end
 
+    # 1) Block if this user is already registered for this match
+    if match.registrations.where(user_id: current_user.id).exists?
+      redirect_back fallback_location: schedule_path,
+                    alert: "Du är redan anmäld till denna match.",
+                    status: :see_other
+      return
+    end
+
+    # 2) If team registration: block if this team is already registered for this match
+    if user_team && match.registrations.where(user_team_id: user_team.id).exists?
+      redirect_back fallback_location: schedule_path,
+                    alert: "Det här laget är redan anmält till matchen.",
+                    status: :see_other
+      return
+    end
+
+    team = pick_team_for_match(match)
+    unless team
+      redirect_back fallback_location: schedule_path,
+                    alert: "Den här matchen är fullbokad.",
+                    status: :see_other
+      return
+    end
+
+    team_size = 1
+
+    if registration_type == "team"
       members_count = user_team.members.count
 
       if members_count <= 0
@@ -35,6 +54,7 @@ class RegistrationsController < ApplicationController
         return
       end
 
+      # Default to member count, let user override but never exceed members_count
       raw_team_size = params[:team_size].to_i
       team_size =
         if raw_team_size <= 0
@@ -79,6 +99,7 @@ class RegistrationsController < ApplicationController
   def pick_team_for_match(match)
     return nil if match.hard_limit_reached?
 
+    # Prefer team with soft capacity, then any with hard capacity
     match.teams.find { |t| !t.soft_limit_reached? && !t.hard_limit_reached? } ||
       match.teams.find { |t| !t.hard_limit_reached? }
   end

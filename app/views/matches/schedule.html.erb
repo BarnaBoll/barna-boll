@@ -240,6 +240,17 @@
 
                   <% city_dot_color = match.city&.color.presence || "#f97316" %>
 
+                  <% already_registered =
+                       if user_signed_in?
+                         match.registrations.where(user_id: current_user.id).exists? ||
+                           match.registrations.where(user_team_id: current_user.user_teams.select(:id)).exists?
+                       else
+                         false
+                       end %>
+
+                  <% full = capacity.positive? && booked >= capacity %>
+                  <% disabled = full || already_registered %>
+
                   <div class="px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div class="space-y-1">
                       <div class="flex flex-wrap items-center gap-2">
@@ -295,12 +306,11 @@
                         </div>
                       </div>
 
-                      <!-- Register button / full state -->
-                      <% full = capacity.positive? && booked >= capacity %>
+                      <!-- Register button / full / already registered -->
                       <button
                         type="button"
-                        class="mt-1 inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold <%= full ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
-                        <% unless full %>
+                        class="mt-1 inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                        <% unless disabled %>
                           data-open-register-modal
                           data-match-id="<%= match.id %>"
                           data-match-title="<%= match.title %>"
@@ -313,6 +323,8 @@
                         <% end %>>
                         <% if full %>
                           Fullbokat
+                        <% elsif already_registered %>
+                          Redan anmäld
                         <% else %>
                           Boka plats
                         <% end %>
@@ -348,6 +360,16 @@
                     <% ratio    = capacity.positive? ? (booked.to_f / capacity.to_f) : 0.0 %>
                     <% full     = capacity.positive? && booked >= capacity %>
 
+                    <% already_registered =
+                         if user_signed_in?
+                           match.registrations.where(user_id: current_user.id).exists? ||
+                             match.registrations.where(user_team_id: current_user.user_teams.select(:id)).exists?
+                         else
+                           false
+                         end %>
+
+                    <% disabled = full || already_registered %>
+
                     <div class="rounded-xl border border-slate-800 bg-slate-900/80 px-2 py-1.5 flex flex-col gap-1">
                       <div class="flex justify-between gap-2">
                         <p class="text-[11px] font-semibold text-slate-100 truncate">
@@ -366,8 +388,8 @@
 
                       <button
                         type="button"
-                        class="mt-0.5 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-semibold <%= full ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
-                        <% unless full %>
+                        class="mt-0.5 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-semibold <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                        <% unless disabled %>
                           data-open-register-modal
                           data-match-id="<%= match.id %>"
                           data-match-title="<%= match.title %>"
@@ -380,6 +402,8 @@
                         <% end %>>
                         <% if full %>
                           Fullbokat
+                        <% elsif already_registered %>
+                          Redan anmäld
                         <% else %>
                           Boka
                         <% end %>

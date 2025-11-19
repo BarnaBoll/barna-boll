@@ -7,8 +7,29 @@ class Registration < ApplicationRecord
 
   validate :team_capacity
   validate :team_size_within_member_count
+  validate :no_duplicate_match_registration
 
   private
+
+  def no_duplicate_match_registration
+    match = team.match
+
+    # If this is an individual registration
+    if user.present?
+      if match.registrations.where(user_id: user.id).exists?
+        errors.add(:base, "Du är redan anmäld till denna match.")
+      end
+    end
+
+    # If this is a team registration
+    if user_team.present?
+      member_ids = user_team.members.pluck(:id)
+
+      if match.registrations.where(user_id: member_ids).exists?
+        errors.add(:base, "En eller flera medlemmar i laget är redan anmälda till denna match.")
+      end
+    end
+  end
 
   def team_capacity
     if team.hard_limit_reached?

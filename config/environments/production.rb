@@ -76,14 +76,14 @@ Rails.application.configure do
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   config.action_mailer.smtp_settings = {
     address:              ENV["SMTP_ADDRESS"],          # "mail.barnaboll.se"
-    port:                 ENV.fetch("SMTP_PORT", 465).to_i,
+    port:                 ENV.fetch("SMTP_PORT", 587).to_i,
     domain:               "barnaboll.se",
     user_name:            ENV["SMTP_USERNAME"],         # "no-reply@barnaboll.se"
     password:             ENV["SMTP_PASSWORD"],
     authentication:       :plain,
-    ssl:                  true,     # using SMTPS on 465
-    tls:                  true,
-    enable_starttls_auto: false     # STARTTLS is for 587, not 465
+    enable_starttls_auto: true,
+    ssl:                  false,
+    tls:                  false
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to

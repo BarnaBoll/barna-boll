@@ -28,6 +28,9 @@ bin/rails tailwindcss:install
 - Services (job queues, cache servers, search engines, etc.)
 
 - Deployment instructions
+  git add .
+  git commit -am "make it better"
+  git push heroku main
 
 bin/rails tailwindcss:build
 bin/rails tailwindcss:install

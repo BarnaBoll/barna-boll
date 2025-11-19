@@ -71,6 +71,8 @@ Rails.application.configure do
     protocol: "https"
   }
 
+  config.action_mailer.asset_host = "https://barnaboll.se"
+
   config.action_mailer.delivery_method = :smtp
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.

@@ -1,8 +1,22 @@
 <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#020617; color:#e2e8f0; padding:24px;">
-  <div style="max-width:480px;margin:0 auto;border-radius:20px;border:1px solid #1f2937;background:#020617;padding:32px;">
+  <div style="max-width:520px;margin:0 auto;border-radius:20px;border:1px solid #1f2937;background:#020617;padding:32px;">
 
-    <h1 style="font-size:20px;margin:0 0 12px;color:#f9fafb;">Lås upp ditt konto</h1>
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:24px;">
+      <%= link_to main_app.root_url do %>
+        <%= image_tag "barnaboll_logo.jpg",
+              alt: "Barnaboll",
+              style: "width:48px;height:48px;border-radius:14px;display:block;margin:0 auto 8px;box-shadow:0 0 16px rgba(251,146,60,0.45);" %>
+      <% end %>
 
+      <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">
+        Barnaboll
+      </div>
+
+      <h1 style="font-size:20px;margin:4px 0 0;color:#f9fafb;">Lås upp ditt konto</h1>
+    </div>
+
+    <!-- Body -->
     <p style="font-size:14px;margin:0 0 12px;">
       Hej <strong><%= @resource.email %></strong>,
     </p>
@@ -17,19 +31,33 @@
                   unlock_url(@resource, unlock_token: @token),
                   style: "
                     display:inline-block;
-                    padding:12px 22px;
+                    padding:12px 24px;
                     border-radius:999px;
                     background:linear-gradient(to right,#fb923c,#ec4899);
                     color:#020617;
                     font-size:14px;
                     font-weight:600;
                     text-decoration:none;
+                    box-shadow:0 10px 25px rgba(236,72,153,0.35);
                   " %>
     </div>
 
     <p style="font-size:12px;color:#94a3b8;margin:0;">
       Om det inte var du som försökte logga in rekommenderar vi att du byter lösenord efter upplåsning.
     </p>
+
+    <!-- Footer -->
+    <div style="margin-top:32px;padding-top:20px;border-top:1px solid #1f2937;font-size:11px;color:#64748b;text-align:center;">
+      <div style="margin-bottom:8px;">
+        <%= link_to "Om Barnaboll", about_url, style: "color:#9ca3af;text-decoration:none;margin:0 6px;" %> ·
+        <%= link_to "Integritet", privacy_url, style: "color:#9ca3af;text-decoration:none;margin:0 6px;" %> ·
+        <%= link_to "Villkor", terms_url, style: "color:#9ca3af;text-decoration:none;margin:0 6px;" %> ·
+        <%= link_to "Kontakt", contact_url, style: "color:#9ca3af;text-decoration:none;margin:0 6px;" %>
+      </div>
+      <div style="color:#475569;">
+        ©2022 Barnaboll.
+      </div>
+    </div>
 
   </div>
 </div>

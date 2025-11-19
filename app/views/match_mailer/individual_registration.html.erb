@@ -1,0 +1,187 @@
+<%# app/views/match_mailer/individual_registration.html.erb %>
+<%
+  # Build times
+  start_time =
+    if @match.time.present?
+      Time.zone.local(@match.date.year, @match.date.month, @match.date.day,
+                      @match.time.hour, @match.time.min)
+    else
+      @match.date.to_time.change(hour: 18) # fallback 18:00
+    end
+
+  end_time   = start_time + 90.minutes
+  start_utc  = start_time.utc.strftime("%Y%m%dT%H%M%SZ")
+  end_utc    = end_time.utc.strftime("%Y%m%dT%H%M%SZ")
+
+  title        = "#{@match.title} – Barnaboll"
+  details      = @match.description.to_s
+  location_str = [@match.location.name, @match.city.name].compact.join(", ")
+
+  google_calendar_url =
+    "https://calendar.google.com/calendar/render?action=TEMPLATE" \
+    "&text=#{ERB::Util.url_encode(title)}" \
+    "&details=#{ERB::Util.url_encode(details)}" \
+    "&location=#{ERB::Util.url_encode(location_str)}" \
+    "&dates=#{start_utc}/#{end_utc}"
+
+  outlook_calendar_url =
+    "https://outlook.live.com/calendar/0/deeplink/compose" \
+    "?path=/calendar/action/compose&rru=addevent" \
+    "&startdt=#{ERB::Util.url_encode(start_time.utc.iso8601)}" \
+    "&enddt=#{ERB::Util.url_encode(end_time.utc.iso8601)}" \
+    "&subject=#{ERB::Util.url_encode(title)}" \
+    "&body=#{ERB::Util.url_encode(details)}" \
+    "&location=#{ERB::Util.url_encode(location_str)}"
+
+  maps_query = @match.location.address.presence || location_str
+  maps_url   = "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(maps_query)}"
+
+  # Inline ICS for Apple/iCal button
+  dtstamp = Time.current.utc.strftime("%Y%m%dT%H%M%SZ")
+  uid     = "match-#{@match.id}-user-#{@user.id}@barnaboll.se"
+
+  ics_body = <<~ICS
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//Barnaboll//Match//EN
+    CALSCALE:GREGORIAN
+    METHOD:PUBLISH
+    BEGIN:VEVENT
+    UID:#{uid}
+    DTSTAMP:#{dtstamp}
+    DTSTART:#{start_utc}
+    DTEND:#{end_utc}
+    SUMMARY:#{title}
+    DESCRIPTION:#{details}
+    LOCATION:#{location_str}
+    BEGIN:VALARM
+    ACTION:DISPLAY
+    DESCRIPTION:Påminnelse
+    TRIGGER:-PT60M
+    END:VALARM
+    END:VEVENT
+    END:VCALENDAR
+  ICS
+
+  ical_data_url = "data:text/calendar;charset=utf-8,#{ERB::Util.url_encode(ics_body)}"
+%>
+
+<div style="font-family:-apple-system,system-ui,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#020617;color:#e2e8f0;padding:24px;">
+  <div style="max-width:540px;margin:0 auto;border-radius:20px;border:1px solid #1f2937;background:#020617;padding:28px;">
+
+    <!-- Logo header -->
+    <div style="text-align:center;margin-bottom:16px;">
+      <%= link_to main_app.root_url do %>
+        <%= image_tag "logo.svg",
+              alt: "Barnaboll",
+              style: "height:40px;width:auto;border-radius:12px;box-shadow:0 0 12px rgba(255,145,0,0.4);" %>
+      <% end %>
+    </div>
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="display:inline-flex;align-items:center;justify-content:center;height:40px;width:40px;border-radius:999px;background:linear-gradient(135deg,#fb923c,#ec4899);margin-bottom:8px;">
+        <span style="font-size:18px;">⚽</span>
+      </div>
+
+      <h1 style="font-size:20px;margin:6px 0 4px;color:#f9fafb;">
+        Du är anmäld! 🎉
+      </h1>
+
+      <p style="font-size:13px;color:#94a3b8;margin:0;">
+        <strong><%= @user.name_or_email %></strong>, din plats till den här matchen är bekräftad.
+      </p>
+    </div>
+
+    <!-- Match meta -->
+    <div style="border-radius:16px;border:1px solid #1f2937;background:#020617;padding:16px 18px;margin-bottom:18px;">
+      <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#64748b;margin:0 0 8px;">
+        Matchinfo
+      </p>
+
+      <p style="font-size:15px;font-weight:600;color:#e5e7eb;margin:0 0 6px;">
+        <%= @match.title %>
+      </p>
+
+      <p style="font-size:13px;color:#cbd5e1;margin:0 0 4px;">
+        <strong>📅 Datum:</strong>
+        <%= l(@match.date, format: :long) rescue @match.date.to_s %>
+      </p>
+
+      <% if @match.time.present? %>
+        <p style="font-size:13px;color:#cbd5e1;margin:0 0 4px;">
+          <strong>⏰ Tid:</strong>
+          <%= @match.time.strftime("%H:%M") %>
+        </p>
+      <% end %>
+
+      <p style="font-size:13px;color:#cbd5e1;margin:0 0 4px;">
+        <strong>📍 Plats:</strong>
+        <%= @match.location.name %>, <%= @match.city.name %>
+      </p>
+
+      <% if @match.description.present? %>
+        <p style="font-size:13px;color:#94a3b8;margin:8px 0 0;">
+          <%= @match.description %>
+        </p>
+      <% end %>
+    </div>
+
+    <!-- Calendar + map actions -->
+    <div style="border-radius:16px;border:1px solid #1f2937;background:#020617;padding:16px 18px;margin-bottom:18px;">
+      <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#64748b;margin:0 0 10px;">
+        Lägg till i kalendern
+      </p>
+
+      <p style="font-size:12px;color:#94a3b8;margin:0 0 10px;">
+        Vi har bifogat en <strong>.ics-fil</strong> till mailet. Den funkar i Apple Calendar / iCal, Outlook och de flesta andra kalendrar.
+      </p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+        <!-- Google / Gmail -->
+        <a href="<%= google_calendar_url %>"
+           style="flex:1 1 160px;min-width:160px;text-align:center;display:inline-block;padding:9px 12px;border-radius:999px;background:linear-gradient(to right,#fb923c,#ec4899);color:#020617;font-size:12px;font-weight:600;text-decoration:none;">
+          📆 Öppna i Google Kalender
+        </a>
+
+        <!-- Outlook web -->
+        <a href="<%= outlook_calendar_url %>"
+           style="flex:1 1 160px;min-width:160px;text-align:center;display:inline-block;padding:9px 12px;border-radius:999px;border:1px solid #334155;background:#020617;color:#e5e7eb;font-size:12px;font-weight:500;text-decoration:none;">
+          📅 Lägg till i Outlook
+        </a>
+
+        <!-- Apple / iCal -->
+        <a href="<%= ical_data_url %>"
+           style="flex:1 1 160px;min-width:160px;text-align:center;display:inline-block;padding:9px 12px;border-radius:999px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;font-size:12px;font-weight:500;text-decoration:none;">
+           Lägg till i Apple-kalender
+        </a>
+      </div>
+    </div>
+
+    <!-- Map button -->
+    <div style="text-align:center;margin:18px 0 4px;">
+      <a href="<%= maps_url %>"
+         style="display:inline-block;padding:10px 20px;border-radius:999px;background:#0f172a;color:#e5e7eb;border:1px solid #334155;font-size:13px;font-weight:500;text-decoration:none;">
+        🗺️ Öppna plats i Google Maps
+      </a>
+    </div>
+
+    <p style="font-size:11px;color:#64748b;margin-top:18px;text-align:center;">
+      Behöver du avboka? Logga in på Barnaboll eller svara på det här mailet.
+    </p>
+
+    <!-- Footer -->
+    <hr style="border:none;border-top:1px solid #1f2937;margin:20px 0 12px;">
+
+    <div style="text-align:center;font-size:11px;color:#6b7280;">
+      <p style="margin:0 0 4px;">Barnaboll</p>
+      <p style="margin:0;">
+        <a href="<%= main_app.about_url %>"   style="color:#9ca3af;text-decoration:none;">Om oss</a> ·
+        <a href="<%= main_app.privacy_url %>" style="color:#9ca3af;text-decoration:none;">Integritet</a> ·
+        <a href="<%= main_app.terms_url %>"   style="color:#9ca3af;text-decoration:none;">Villkor</a> ·
+        <a href="<%= main_app.contact_url %>" style="color:#9ca3af;text-decoration:none;">Kontakt</a>
+      </p>
+    </div>
+
+  </div>
+</div>

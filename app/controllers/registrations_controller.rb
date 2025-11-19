@@ -35,7 +35,6 @@ class RegistrationsController < ApplicationController
         return
       end
 
-      # Default to member count, let user override but never exceed members_count
       raw_team_size = params[:team_size].to_i
       team_size =
         if raw_team_size <= 0
@@ -53,8 +52,21 @@ class RegistrationsController < ApplicationController
     )
 
     if registration.save
-      redirect_to schedule_path,
-                  notice: (registration_type == "team" ? "Laget är anmält till matchen." : "Du är anmäld till matchen.")
+      if registration_type == "team" && user_team.present?
+        # Email all members of the team about the upcoming match
+        user_team.members.find_each do |member|
+          MatchMailer.team_registration(registration.id, member.id).deliver_later
+        end
+
+        redirect_to schedule_path,
+                    notice: "Laget är anmält till matchen."
+      else
+        # Individual registration email
+        MatchMailer.individual_registration(registration.id).deliver_later
+
+        redirect_to schedule_path,
+                    notice: "Du är anmäld till matchen."
+      end
     else
       redirect_back fallback_location: schedule_path,
                     alert: registration.errors.full_messages.to_sentence,
@@ -67,7 +79,6 @@ class RegistrationsController < ApplicationController
   def pick_team_for_match(match)
     return nil if match.hard_limit_reached?
 
-    # Prefer team with soft capacity, then any with hard capacity
     match.teams.find { |t| !t.soft_limit_reached? && !t.hard_limit_reached? } ||
       match.teams.find { |t| !t.hard_limit_reached? }
   end

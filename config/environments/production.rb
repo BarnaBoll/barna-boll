@@ -63,7 +63,7 @@ Rails.application.configure do
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = {
@@ -71,14 +71,20 @@ Rails.application.configure do
     protocol: "https"
   }
 
+  config.action_mailer.delivery_method = :smtp
+
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  config.action_mailer.smtp_settings = {
+    address:              ENV["SMTP_ADDRESS"],          # "mail.barnaboll.se"
+    port:                 ENV.fetch("SMTP_PORT", 465).to_i,
+    domain:               "barnaboll.se",
+    user_name:            ENV["SMTP_USERNAME"],         # "no-reply@barnaboll.se"
+    password:             ENV["SMTP_PASSWORD"],
+    authentication:       :plain,
+    ssl:                  true,     # using SMTPS on 465
+    tls:                  true,
+    enable_starttls_auto: false     # STARTTLS is for 587, not 465
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

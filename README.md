@@ -9,6 +9,7 @@ Delete leftover builds data => rm -f tmp/pids/server.pid
 --------- GENERAL INFO ---------
 
 - Ruby version
+  3.3.7
 
 bin/rails tailwindcss:install
 
@@ -17,6 +18,8 @@ bin/rails tailwindcss:install
 - Configuration
 
 - Database creation
+  bin/rails db:create
+  bin/rails db:migrate
 
 - Database initialization
 
@@ -28,6 +31,3 @@ bin/rails tailwindcss:install
 
 bin/rails tailwindcss:build
 bin/rails tailwindcss:install
-
-bin/rails db:create
-bin/rails db:migrate

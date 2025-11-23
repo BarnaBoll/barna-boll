@@ -504,7 +504,9 @@
                             class="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70"
                             data-user-team-select>
                       <% @user_teams.each do |ut| %>
-                        <option value="<%= ut.id %>" data-member-count="<%= ut.members.count %>">
+                        <option value="<%= ut.id %>"
+                                data-member-count="<%= ut.members.count %>"
+                                data-members="<%= ut.members.map { |m| { id: m.id, name: m.name_or_email } }.to_json %>">
                           <%= ut.name %> (<%= ut.members.count %> medlemmar)
                           <% if ut.creator?(current_user) %>
                             (skapare)
@@ -528,14 +530,28 @@
                   Antal spelare som kommer
                 </label>
                 <%= number_field_tag :team_size,
-                                     nil,
-                                     min: 1,
-                                     max: 10,
-                                     class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
-                                     id: "team-size-input" %>
+                                    nil,
+                                    min: 1,
+                                    max: 10,
+                                    readonly: true,
+                                    class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70 cursor-default",
+                                    id: "team-size-input" %>
                 <p class="text-[10px] text-slate-500 mt-1" id="team-size-help">
                   <!-- Dynamic help text will be inserted here -->
                 </p>
+              </div>
+
+              <!-- NEW: team members list -->
+              <div id="team-members-wrapper" class="hidden mt-2">
+                <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                  Spelare i laget
+                </label>
+                <p class="text-[10px] text-slate-500 mb-1">
+                  Markera vilka spelare som <span class="font-semibold text-slate-300">kommer</span>. Avmarkera de som inte kan komma. Antalet kryssade spelare styr automatiskt antalet platser.
+                </p>
+                <div id="team-members-list" class="space-y-1 text-[11px] text-slate-100">
+                  <!-- Fylls i via JavaScript baserat på valt lag -->
+                </div>
               </div>
 
               <div>
@@ -546,7 +562,7 @@
                                   nil,
                                   rows: 3,
                                   class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
-                                  placeholder: "T.ex. nivå, önskemål, kompisar…" %>
+                                  placeholder: "T.ex. vilka i laget som inte kan, nivå, önskemål…" %>
               </div>
             </div>
 
@@ -635,205 +651,286 @@
 </style>
 
 <script>
-  function openCalendarModal(modal, content) {
-    if (!modal || !content) return;
-    modal.classList.remove("hidden", "pointer-events-none");
-    modal.style.opacity = "1";
-    modal.style.animation = "fadeInSlow 0.25s ease-out";
-    content.style.animation = "modalZoomIn 0.25s ease-out forwards";
-  }
+function openCalendarModal(modal, content) {
+  if (!modal || !content) return;
+  modal.classList.remove("hidden", "pointer-events-none");
+  modal.style.opacity = "1";
+  modal.style.animation = "fadeInSlow 0.25s ease-out";
+  content.style.animation = "modalZoomIn 0.25s ease-out forwards";
+}
 
-  function closeCalendarModal(modal) {
-    if (!modal) return;
-    modal.style.animation = "fadeOutSlow 0.25s ease-in";
+function closeCalendarModal(modal) {
+  if (!modal) return;
+  modal.style.animation = "fadeOutSlow 0.25s ease-in";
+  modal.style.opacity = "0";
+  modal.classList.add("pointer-events-none");
+  setTimeout(function () {
+    modal.classList.add("hidden");
+  }, 260);
+}
+
+// Reset on load so back-button doesn't leave a "dead" modal open
+function resetCalendarModals() {
+  document.querySelectorAll(".js-calendar-modal").forEach(function (modal) {
+    modal.classList.add("hidden", "pointer-events-none");
     modal.style.opacity = "0";
-    modal.classList.add("pointer-events-none");
-    setTimeout(function () {
-      modal.classList.add("hidden");
-    }, 260);
+    modal.style.animation = "none";
+  });
+}
+
+function initTeamRegistration() {
+  const teamSelect         = document.getElementById('user-team-select');
+  const teamSizeInput      = document.getElementById('team-size-input');
+  const teamSizeHelp       = document.getElementById('team-size-help');
+  const typeInput          = document.getElementById('register-type-input');
+  const teamMembersWrapper = document.getElementById('team-members-wrapper');
+  const teamMembersList    = document.getElementById('team-members-list');
+
+  if (!teamSelect || !teamSizeInput || !teamSizeHelp || !teamMembersList) return;
+
+  // extra safety: make sure number field can't be changed manually
+  teamSizeInput.readOnly = true;
+  teamSizeInput.addEventListener('wheel', function (e) { e.preventDefault(); });
+  teamSizeInput.addEventListener('keydown', function (e) { e.preventDefault(); });
+
+  function syncTeamSizeFromCheckboxes() {
+    const checkedCount = teamMembersList.querySelectorAll('input[name="present_member_ids[]"]:checked').length;
+    if (checkedCount > 0) {
+      teamSizeInput.value = checkedCount;
+    }
   }
 
-  // Reset on load so back-button doesn't leave a "dead" modal open
-  function resetCalendarModals() {
-    document.querySelectorAll(".js-calendar-modal").forEach(function (modal) {
-      modal.classList.add("hidden", "pointer-events-none");
-      modal.style.opacity = "0";
-      modal.style.animation = "none";
-    });
-  }
+  function buildMembersListFromSelection() {
+    const selectedOption = teamSelect.options[teamSelect.selectedIndex];
+    if (!selectedOption) return;
 
-  function initTeamRegistration() {
-    const teamSelect = document.getElementById('user-team-select');
-    const teamSizeInput = document.getElementById('team-size-input');
-    const teamSizeHelp = document.getElementById('team-size-help');
-    const typeInput = document.getElementById('register-type-input');
+    const membersJson = selectedOption.dataset.members;
+    let members = [];
 
-    if (!teamSelect || !teamSizeInput || !teamSizeHelp) return;
-
-    function updateTeamSizeFromSelection() {
-      const selectedOption = teamSelect.options[teamSelect.selectedIndex];
-      if (selectedOption && selectedOption.dataset.memberCount) {
-        const memberCount = parseInt(selectedOption.dataset.memberCount);
-        teamSizeInput.value = memberCount;
-        teamSizeInput.max = memberCount;
-        teamSizeHelp.textContent = `Antal medlemmar i laget: ${memberCount}. Du kan minska antalet om vissa inte kan komma.`;
+    if (membersJson) {
+      try {
+        members = JSON.parse(membersJson);
+      } catch (e) {
+      members = [];
       }
     }
 
-    // Update when team selection changes
-    teamSelect.addEventListener('change', updateTeamSizeFromSelection);
+    teamMembersList.innerHTML = '';
 
-    // Update when registration type changes to team
-    document.querySelectorAll('.js-register-type-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        if (this.dataset.type === 'team') {
-          // Small delay to ensure the team wrapper is visible
-          setTimeout(updateTeamSizeFromSelection, 50);
-        }
-      });
+    if (!members.length) {
+      if (teamMembersWrapper) teamMembersWrapper.classList.add('hidden');
+      teamSizeHelp.textContent = '';
+      return;
+    }
+
+    members.forEach(function(member) {
+      const row = document.createElement('label');
+      row.className = "flex items-center gap-2 text-[11px] text-slate-100";
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'present_member_ids[]';
+      checkbox.value = member.id;
+      checkbox.checked = true;
+      checkbox.className = "h-3 w-3 rounded border-slate-500 bg-slate-900";
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = member.name || ("Spelare " + member.id);
+
+      row.appendChild(checkbox);
+      row.appendChild(nameSpan);
+      teamMembersList.appendChild(row);
     });
 
-    // Initialize if team registration is already selected
-    if (typeInput && typeInput.value === 'team') {
-      updateTeamSizeFromSelection();
+    if (teamMembersWrapper) {
+      teamMembersWrapper.classList.remove('hidden');
     }
+
+    const memberCount = members.length;
+    teamSizeInput.value = memberCount;
+    teamSizeInput.max   = memberCount;
+    teamSizeHelp.textContent = `Antal medlemmar i laget: ${memberCount}. Avmarkera de som inte kan komma – vi uppdaterar antalet platser automatiskt.`;
+
+    teamMembersList.addEventListener('change', syncTeamSizeFromCheckboxes);
+    syncTeamSizeFromCheckboxes();
   }
 
-  function initCalendarModals() {
-    resetCalendarModals();
+  function updateTeamSizeFromSelection() {
+    const selectedOption = teamSelect.options[teamSelect.selectedIndex];
+    if (!selectedOption) return;
 
-    var registerModal        = document.getElementById("register-modal");
-    var registerModalContent = document.getElementById("register-modal-content");
-    var authModal            = document.getElementById("auth-required-modal");
-    var authModalContent     = document.getElementById("auth-required-modal-content");
+    const memberCountData = selectedOption.dataset.memberCount;
+    if (memberCountData) {
+      const memberCount = parseInt(memberCountData, 10);
+      if (!isNaN(memberCount)) {
+        teamSizeInput.value = memberCount;
+        teamSizeInput.max   = memberCount;
+        teamSizeHelp.textContent = `Antal medlemmar i laget: ${memberCount}. Avmarkera de som inte kan komma.`;
+      }
+    }
 
-    // Close handlers
-    [registerModal, authModal].forEach(function (modal) {
-      if (!modal) return;
-      modal.querySelectorAll("[data-modal-dismiss]").forEach(function (el) {
-        el.addEventListener("click", function () {
-          closeCalendarModal(modal);
-        });
+    buildMembersListFromSelection();
+  }
+
+  teamSelect.addEventListener('change', function() {
+    updateTeamSizeFromSelection();
+  });
+
+  document.querySelectorAll('.js-register-type-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (this.dataset.type === 'team') {
+        setTimeout(updateTeamSizeFromSelection, 50);
+      }
+    });
+  });
+
+  if (typeInput && typeInput.value === 'team') {
+    updateTeamSizeFromSelection();
+  }
+}
+
+function initCalendarModals() {
+  resetCalendarModals();
+
+  var registerModal         = document.getElementById("register-modal");
+  var registerModalContent  = document.getElementById("register-modal-content");
+  var authModal             = document.getElementById("auth-required-modal");
+  var authModalContent      = document.getElementById("auth-required-modal-content");
+  var teamMembersWrapperRef = document.getElementById("team-members-wrapper");
+  var teamMembersListRef    = document.getElementById("team-members-list");
+
+  // Close handlers
+  [registerModal, authModal].forEach(function (modal) {
+    if (!modal) return;
+    modal.querySelectorAll("[data-modal-dismiss]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        closeCalendarModal(modal);
       });
     });
+  });
 
-    // Open from match cards
-    document.querySelectorAll("[data-open-register-modal]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var signedIn   = btn.dataset.userSignedIn === "true";
-        var matchId    = btn.dataset.matchId;
-        var title      = btn.dataset.matchTitle || "Match";
-        var city       = btn.dataset.matchCity || "";
-        var datetime   = btn.dataset.matchDatetime || "";
-        var metaString = [city, datetime].filter(Boolean).join(" · ");
+  // Open from match cards
+  document.querySelectorAll("[data-open-register-modal]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var signedIn   = btn.dataset.userSignedIn === "true";
+      var matchId    = btn.dataset.matchId;
+      var title      = btn.dataset.matchTitle || "Match";
+      var city       = btn.dataset.matchCity || "";
+      var datetime   = btn.dataset.matchDatetime || "";
+      var metaString = [city, datetime].filter(Boolean).join(" · ");
 
-        if (signedIn) {
-          if (!registerModal || !registerModalContent) return;
+      if (signedIn) {
+        if (!registerModal || !registerModalContent) return;
 
-          var titleEl         = document.getElementById("register-modal-title");
-          var metaEl          = document.getElementById("register-modal-meta");
-          var idInput         = document.getElementById("register-match-id");
-          var typeInput       = document.getElementById("register-type-input");
-          var teamWrapper     = document.getElementById("team-size-wrapper");
-          var userTeamWrapper = document.getElementById("user-team-wrapper");
-
-          if (titleEl) titleEl.textContent = title;
-          if (metaEl)  metaEl.textContent  = metaString;
-          if (idInput) idInput.value       = matchId;
-
-          // Reset type selection to individual
-          if (typeInput) typeInput.value = "individual";
-          if (teamWrapper) teamWrapper.classList.add("hidden");
-          if (userTeamWrapper) userTeamWrapper.classList.add("hidden");
-
-          document.querySelectorAll(".js-register-type-btn").forEach(function (tbtn) {
-            tbtn.dataset.active = (tbtn.dataset.type === "individual") ? "true" : "false";
-          });
-
-          openCalendarModal(registerModal, registerModalContent);
-        } else {
-          if (!authModal || !authModalContent) return;
-          openCalendarModal(authModal, authModalContent);
-        }
-      });
-    });
-
-    // Individual vs team toggle
-    document.querySelectorAll(".js-register-type-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var selectedType    = btn.dataset.type;
+        var titleEl         = document.getElementById("register-modal-title");
+        var metaEl          = document.getElementById("register-modal-meta");
+        var idInput         = document.getElementById("register-match-id");
         var typeInput       = document.getElementById("register-type-input");
         var teamWrapper     = document.getElementById("team-size-wrapper");
         var userTeamWrapper = document.getElementById("user-team-wrapper");
 
-        document.querySelectorAll(".js-register-type-btn").forEach(function (b) {
-          b.dataset.active = (b === btn) ? "true" : "false";
+        if (titleEl) titleEl.textContent = "Registrera dig till match";
+        if (metaEl)  metaEl.textContent  = metaString;
+        if (idInput) idInput.value       = matchId;
+
+        // Reset type selection to individual + hide team UI
+        if (typeInput) typeInput.value = "individual";
+        if (teamWrapper) teamWrapper.classList.add("hidden");
+        if (userTeamWrapper) userTeamWrapper.classList.add("hidden");
+        if (teamMembersWrapperRef) teamMembersWrapperRef.classList.add("hidden");
+        if (teamMembersListRef) teamMembersListRef.innerHTML = "";
+
+        document.querySelectorAll(".js-register-type-btn").forEach(function (tbtn) {
+          tbtn.dataset.active = (tbtn.dataset.type === "individual") ? "true" : "false";
         });
 
-        if (typeInput) typeInput.value = selectedType;
-
-        if (selectedType === "team") {
-          if (teamWrapper)     teamWrapper.classList.remove("hidden");
-          if (userTeamWrapper) userTeamWrapper.classList.remove("hidden");
-        } else {
-          if (teamWrapper)     teamWrapper.classList.add("hidden");
-          if (userTeamWrapper) userTeamWrapper.classList.add("hidden");
-        }
-      });
-    });
-  }
-
-  function initCityDropdown() {
-    var wrapper = document.querySelector("[data-city-select-wrapper]");
-    if (!wrapper) return;
-    if (wrapper.dataset.bound === "true") return;
-    wrapper.dataset.bound = "true";
-
-    var button = wrapper.querySelector("[data-city-select-button]");
-    var menu   = wrapper.querySelector("[data-city-select-menu]");
-    var input  = wrapper.querySelector("#calendar-city-input");
-    var form   = wrapper.closest("form");
-
-    if (!button || !menu || !input || !form) return;
-
-    button.addEventListener("click", function () {
-      menu.classList.toggle("hidden");
-    });
-
-    menu.querySelectorAll("[data-city-option]").forEach(function (opt) {
-      opt.addEventListener("click", function () {
-        var value = opt.dataset.value || "";
-        var label = opt.dataset.label || "Alla städer";
-        var color = opt.dataset.color || "#e5e7eb";
-
-        input.value = value;
-
-        var dot     = button.querySelector("[data-city-dot]");
-        var labelEl = button.querySelector("[data-city-label]");
-
-        if (dot)     dot.style.backgroundColor = color;
-        if (labelEl) labelEl.textContent       = label;
-
-        menu.classList.add("hidden");
-        form.submit();
-      });
-    });
-
-    // Close on outside click
-    document.addEventListener("click", function (e) {
-      if (!wrapper.contains(e.target)) {
-        menu.classList.add("hidden");
+        openCalendarModal(registerModal, registerModalContent);
+      } else {
+        if (!authModal || !authModalContent) return;
+        openCalendarModal(authModal, authModalContent);
       }
     });
-  }
+  });
 
-  function initCalendarPageUI() {
-    initCalendarModals();
-    initCityDropdown();
-    initTeamRegistration();
-  }
+  // Individual vs team toggle
+  document.querySelectorAll(".js-register-type-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var selectedType       = btn.dataset.type;
+      var typeInput          = document.getElementById("register-type-input");
+      var teamWrapper        = document.getElementById("team-size-wrapper");
+      var userTeamWrapper    = document.getElementById("user-team-wrapper");
+      var teamMembersWrapper = document.getElementById("team-members-wrapper");
 
-  document.addEventListener("DOMContentLoaded", initCalendarPageUI);
-  document.addEventListener("turbo:load", initCalendarPageUI);
-  document.addEventListener("turbo:render", initCalendarPageUI);
+      document.querySelectorAll(".js-register-type-btn").forEach(function (b) {
+        b.dataset.active = (b === btn) ? "true" : "false";
+      });
+
+      if (typeInput) typeInput.value = selectedType;
+
+      if (selectedType === "team") {
+        if (teamWrapper)        teamWrapper.classList.remove("hidden");
+        if (userTeamWrapper)    userTeamWrapper.classList.remove("hidden");
+        if (teamMembersWrapper) teamMembersWrapper.classList.remove("hidden");
+      } else {
+        if (teamWrapper)        teamWrapper.classList.add("hidden");
+        if (userTeamWrapper)    userTeamWrapper.classList.add("hidden");
+        if (teamMembersWrapper) teamMembersWrapper.classList.add("hidden");
+      }
+    });
+  });
+}
+
+function initCityDropdown() {
+  var wrapper = document.querySelector("[data-city-select-wrapper]");
+  if (!wrapper) return;
+  if (wrapper.dataset.bound === "true") return;
+  wrapper.dataset.bound = "true";
+
+  var button = wrapper.querySelector("[data-city-select-button]");
+  var menu   = wrapper.querySelector("[data-city-select-menu]");
+  var input  = wrapper.querySelector("#calendar-city-input");
+  var form   = wrapper.closest("form");
+
+  if (!button || !menu || !input || !form) return;
+
+  button.addEventListener("click", function () {
+    menu.classList.toggle("hidden");
+  });
+
+  menu.querySelectorAll("[data-city-option]").forEach(function (opt) {
+    opt.addEventListener("click", function () {
+      var value = opt.dataset.value || "";
+      var label = opt.dataset.label || "Alla städer";
+      var color = opt.dataset.color || "#e5e7eb";
+
+      input.value = value;
+
+      var dot     = button.querySelector("[data-city-dot]");
+      var labelEl = button.querySelector("[data-city-label]");
+
+      if (dot)     dot.style.backgroundColor = color;
+      if (labelEl) labelEl.textContent       = label;
+
+      menu.classList.add("hidden");
+      form.submit();
+    });
+  });
+
+  // Close on outside click
+  document.addEventListener("click", function (e) {
+    if (!wrapper.contains(e.target)) {
+      menu.classList.add("hidden");
+    }
+  });
+}
+
+function initCalendarPageUI() {
+  initCalendarModals();
+  initCityDropdown();
+  initTeamRegistration();
+}
+
+document.addEventListener("DOMContentLoaded", initCalendarPageUI);
+document.addEventListener("turbo:load", initCalendarPageUI);
+document.addEventListener("turbo:render", initCalendarPageUI);
 </script>

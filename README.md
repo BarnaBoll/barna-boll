@@ -1,36 +1,44 @@
 # README
 
+The app is built with **Ruby on Rails 8**, **PostgreSQL**, **Tailwind CSS**, and **Devise** (with Google & Facebook login).
+
 --------- LOCAL DEVELOPMENT ---------
 Start the app with => PORT=4001 bin/dev
 Check if the server is running => lsof -i :4001
 If port is still open kill it => kill -9 PORT_NUMBER
 Delete leftover builds data => rm -f tmp/pids/server.pid
 
---------- GENERAL INFO ---------
+## Tech Stack
 
-- Ruby version
-  3.3.7
+- **Language:** Ruby `3.3.7`
+- **Framework:** Rails `~> 8.1.1`
+- **Database:** PostgreSQL
+- **Auth:** Devise + OmniAuth (Google & Facebook)
+- **Front-end:** Tailwind CSS, Turbo, Stimulus, Importmap
+- **Background jobs:** Solid Queue
+- **Cache:** Solid Cache
+- **File storage:** Local disk (Active Storage)
+- **Mailers:**
+  - Dev: `letter_opener`
+  - Prod: SMTP via Hostup (cPanel)
 
+### Prerequisites
+
+- Ruby `3.3.7` (see `.ruby-version`)
+- Bundler
+- PostgreSQL running locally
+- Yarn/Node **not strictly required** (assets handled by `tailwindcss-rails` + importmap)
+
+### Setup
+
+bundle install
+bin/rails db:create
+bin/rails db:migrate
 bin/rails tailwindcss:install
-
-- System dependencies
-
-- Configuration
-
-- Database creation
-  bin/rails db:create
-  bin/rails db:migrate
-
-- Database initialization
-
-- How to run the test suite
-
-- Services (job queues, cache servers, search engines, etc.)
-
-- Deployment instructions
-  git add .
-  git commit -am "make it better"
-  git push heroku main
-
 bin/rails tailwindcss:build
-bin/rails tailwindcss:install
+
+### Deployment instructions
+
+git add .
+git commit -am "make it better"
+git push heroku main

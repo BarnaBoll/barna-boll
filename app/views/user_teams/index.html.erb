@@ -1,0 +1,142 @@
+<% content_for :title, "Lag – #{current_user.name || current_user.email}" %>
+
+<div class="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-50">
+  <div class="max-w-5xl mx-auto px-4 py-8 space-y-6">
+
+    <!-- Header -->
+    <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-orange-300 mb-1">
+          <span class="h-1 w-1 rounded-full bg-orange-400"></span>
+          Lag
+        </p>
+
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Dina lag
+        </h1>
+
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          Skapa nya lag, bjud in vänner och se vilka lag du är med i.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <%= link_to "Dashboard",
+                    authenticated_root_path,
+                    class: "inline-flex items-center justify-center rounded-full px-4 py-1.5 text-[11px] font-semibold border border-slate-600/70 text-slate-200 hover:border-orange-400 hover:bg-slate-900/60 transition" %>
+      </div>
+    </section>
+
+    <% if flash[:alert].present? %>
+      <section class="rounded-2xl border border-rose-900/70 bg-rose-950/40 p-3 text-xs text-rose-100">
+        <p class="font-semibold mb-1">Något gick fel:</p>
+        <p><%= flash[:alert] %></p>
+      </section>
+    <% end %>
+
+    <% if flash[:notice].present? %>
+      <section class="rounded-2xl border border-emerald-900/60 bg-emerald-950/40 p-3 text-xs text-emerald-100">
+        <p class="font-semibold mb-1"><%= flash[:notice] %></p>
+      </section>
+    <% end %>
+
+    <section class="grid gap-5 lg:grid-cols-[1.2fr_1.3fr]">
+
+      <!-- Left: Create team -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <h2 class="text-base font-semibold mb-1">
+          Skapa nytt lag
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Bygg ett lag med vänner. Som skapare kan du bjuda in spelare och ändra namn/beskrivning.
+        </p>
+
+        <%= form_with model: @user_team,
+                      url: user_teams_path,
+                      local: true do |f| %>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                Lagnamn
+              </label>
+              <%= f.text_field :name,
+                               required: true,
+                               class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                               placeholder: "T.ex. Barna United" %>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+                Beskrivning (valfritt)
+              </label>
+              <%= f.text_area :description,
+                              rows: 3,
+                              class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                              placeholder: "Kort text om laget, stil, nivå etc." %>
+            </div>
+          </div>
+
+          <div class="mt-4 flex justify-end">
+            <%= f.submit "Skapa lag",
+                         class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg hover:from-orange-300 hover:to-pink-400 transition" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Right: Existing teams list -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-base font-semibold">Lag du är med i</h2>
+            <p class="text-xs text-slate-400">
+              Alla lag där du är medlem eller skapare.
+            </p>
+          </div>
+        </div>
+
+        <% if @user_teams.blank? %>
+          <p class="text-xs text-slate-400">
+            Du är inte med i något lag än. Skapa ett lag till vänster eller be någon lägga till dig.
+          </p>
+        <% else %>
+          <div class="space-y-3">
+            <% @user_teams.each do |team| %>
+              <div class="rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2.5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <p class="text-sm font-semibold text-slate-50">
+                      <%= team.name %>
+                    </p>
+                    <% if team.creator?(current_user) %>
+                      <span class="rounded-full border border-emerald-500/60 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                        Du är skapare
+                      </span>
+                    <% end %>
+                  </div>
+
+                  <% if team.description.present? %>
+                    <p class="text-[11px] text-slate-400">
+                      <%= truncate(team.description, length: 120) %>
+                    </p>
+                  <% end %>
+
+                  <p class="text-[11px] text-slate-500">
+                    <span class="font-semibold"><%= team.members.count %></span> spelare ·
+                    Skapad av <span class="font-mono text-slate-300"><%= team.creator.name_or_email %></span>
+                  </p>
+                </div>
+
+                <div class="mt-2 sm:mt-0 flex items-center gap-2 justify-end">
+                  <%= link_to "Visa lag",
+                              user_team_path(team),
+                              class: "inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold text-slate-950 bg-slate-50 hover:bg-slate-200 transition" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+    </section>
+  </div>
+</div>

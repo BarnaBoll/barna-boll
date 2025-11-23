@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_18_191707) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_22_091059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_18_191707) do
     t.integer "hard_limit_total", null: false
     t.bigint "location_id", null: false
     t.decimal "price", precision: 8, scale: 2
+    t.integer "reminder_offset_minutes"
+    t.datetime "reminder_sent_at"
     t.integer "soft_limit_per_team", default: 5, null: false
     t.integer "teams_count", default: 3, null: false
     t.time "time"
@@ -64,6 +66,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_18_191707) do
     t.index ["location_id"], name: "index_player_stats_on_location_id"
     t.index ["user_id", "city_id", "location_id"], name: "index_stats_unique", unique: true
     t.index ["user_id"], name: "index_player_stats_on_user_id"
+  end
+
+  create_table "promotional_emails", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "cta_label"
+    t.string "cta_url"
+    t.text "intro"
+    t.datetime "send_at"
+    t.datetime "sent_at"
+    t.string "subject", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -123,15 +138,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_18_191707) do
     t.string "last_sign_in_ip"
     t.datetime "locked_at"
     t.string "name", null: false
+    t.string "provider"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.integer "sign_in_count", default: 0, null: false
+    t.string "uid"
     t.string "unconfirmed_email"
     t.string "unlock_token"
     t.datetime "updated_at", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end

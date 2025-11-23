@@ -1,0 +1,80 @@
+<%# app/views/promotional_email_mailer/promotional_email.html.erb %>
+<div style="font-family:-apple-system,system-ui,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#020617;color:#e2e8f0;padding:24px;">
+  <div style="max-width:540px;margin:0 auto;border-radius:20px;border:1px solid #1f2937;background:#020617;padding:28px;">
+
+    <!-- Logo header -->
+    <div style="text-align:center;margin-bottom:16px;">
+      <%= link_to main_app.root_url do %>
+        <%= image_tag "logo.svg",
+              alt: "Barnaboll",
+              style: "height:40px;width:auto;border-radius:12px;box-shadow:0 0 12px rgba(255,145,0,0.4);" %>
+      <% end %>
+    </div>
+
+    <!-- Header / icon -->
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="display:inline-flex;align-items:center;justify-content:center;height:40px;width:40px;border-radius:999px;background:linear-gradient(135deg,#fb923c,#ec4899);margin-bottom:8px;">
+        <span style="font-size:18px;">📣</span>
+      </div>
+
+      <h1 style="font-size:20px;margin:6px 0 4px;color:#f9fafb;">
+        <%= @promotional_email.title %>
+      </h1>
+
+      <% if @promotional_email.intro.present? %>
+        <p style="font-size:13px;color:#94a3b8;margin:0;">
+          <%= @promotional_email.intro %>
+        </p>
+      <% else %>
+        <p style="font-size:13px;color:#94a3b8;margin:0;">
+          Hej <strong><%= @user.name_or_email %></strong>! Vi har en ny uppdatering från Barnaboll.
+        </p>
+      <% end %>
+    </div>
+
+    <!-- Body -->
+    <div style="border-radius:16px;border:1px solid #1f2937;background:#020617;padding:16px 18px;margin-bottom:18px;">
+      <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#64748b;margin:0 0 8px;">
+        Nytt från Barnaboll
+      </p>
+
+      <% if @promotional_email.body.present? %>
+        <div style="font-size:13px;color:#e5e7eb;line-height:1.6;">
+          <%= simple_format(@promotional_email.body) %>
+        </div>
+      <% else %>
+        <p style="font-size:13px;color:#e5e7eb;">
+          Vi har laddat upp nya matcher och sessions – logga in och boka din plats!
+        </p>
+      <% end %>
+    </div>
+
+    <!-- CTA button -->
+    <% if @promotional_email.cta_url.present? %>
+      <div style="text-align:center;margin:18px 0 4px;">
+        <a href="<%= @promotional_email.cta_url %>"
+           style="display:inline-block;padding:10px 22px;border-radius:999px;background:linear-gradient(to right,#fb923c,#ec4899);color:#020617;font-size:13px;font-weight:600;text-decoration:none;">
+          <%= @promotional_email.cta_label.presence || "Öppna Barnaboll" %>
+        </a>
+      </div>
+    <% end %>
+
+    <p style="font-size:11px;color:#64748b;margin-top:18px;text-align:center;">
+      Du får detta mail eftersom du har ett konto på Barnaboll. Svara på mailet om du har frågor eller feedback.
+    </p>
+
+    <!-- Footer -->
+    <hr style="border:none;border-top:1px solid #1f2937;margin:20px 0 12px;">
+
+    <div style="text-align:center;font-size:11px;color:#6b7280;">
+      <p style="margin:0 0 4px;">Barnaboll</p>
+      <p style="margin:0;">
+        <a href="<%= main_app.about_url %>"   style="color:#9ca3af;text-decoration:none;">Om oss</a> ·
+        <a href="<%= main_app.privacy_url %>" style="color:#9ca3af;text-decoration:none;">Integritet</a> ·
+        <a href="<%= main_app.terms_url %>"   style="color:#9ca3af;text-decoration:none;">Villkor</a> ·
+        <a href="<%= main_app.contact_url %>" style="color:#9ca3af;text-decoration:none;">Kontakt</a>
+      </p>
+    </div>
+
+  </div>
+</div>

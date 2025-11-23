@@ -28,6 +28,27 @@
             Pris: <%= @match.price.to_i %> kr
           </p>
         <% end %>
+
+        <% if @match.reminder_offset_minutes.present? && @match.reminder_offset_minutes > 0 %>
+          <% mins = @match.reminder_offset_minutes
+             reminder_label =
+               if mins % 1440 == 0
+                 days = mins / 1440
+                 "#{days} dag#{'ar' if days > 1} innan"
+               elsif mins % 60 == 0
+                 hours = mins / 60
+                 "#{hours} timme#{'r' if hours > 1} innan"
+               else
+                 "#{mins} minuter innan"
+               end %>
+          <p class="text-xs text-emerald-300 mt-1">
+            🔔 Påminnelse skickas <%= reminder_label %>.
+          </p>
+        <% else %>
+          <p class="text-xs text-slate-500 mt-1">
+            🔔 Ingen automatisk påminnelse är aktiverad för den här matchen.
+          </p>
+        <% end %>
       </div>
 
       <div class="flex flex-col sm:flex-row gap-2">

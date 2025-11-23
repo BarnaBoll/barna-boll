@@ -64,7 +64,8 @@
                               :id,
                               :name,
                               { prompt: "Välj stad" },
-                              class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+                              class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                              id: "match_city_id" %>
     </div>
   </div>
 
@@ -73,14 +74,25 @@
       <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
         Plats
       </label>
-      <%= f.collection_select :location_id,
-                              Location.includes(:city).order("cities.name, locations.name"),
-                              :id,
-                              :name_with_city,
-                              { prompt: "Välj plats" },
-                              class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      <%= f.select :location_id,
+                   options_for_select(
+                     @cities.flat_map { |city|
+                       city.locations.sort_by(&:name).map do |location|
+                         [
+                           location.name,
+                           location.id,
+                           { "data-city-id": city.id }
+                         ]
+                       end
+                     },
+                     @match.location_id
+                   ),
+                   { prompt: "Välj plats" },
+                   class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70",
+                   id: "match_location_id",
+                   data: { prompt: "Välj plats" } %>
       <p class="mt-1 text-[11px] text-slate-500">
-        (Platsen måste tillhöra samma stad – valideras automatiskt.)
+        (Endast platser i vald stad visas. Platsen måste tillhöra samma stad – valideras automatiskt.)
       </p>
     </div>
 
@@ -112,6 +124,23 @@
     </div>
   </div>
 
+  <!-- Reminder offset -->
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
+        Påminnelse innan match (minuter)
+      </label>
+      <%= f.number_field :reminder_offset_minutes,
+                         min: 0,
+                         step: 5,
+                         placeholder: "t.ex. 60 för 1 timme, 1440 för 24 h",
+                         class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70" %>
+      <p class="mt-1 text-[11px] text-slate-500">
+        Lämna tomt eller 0 för ingen automatisk påminnelse. Exempel: 30 = 30 min, 60 = 1 timme, 1440 = 24 timmar.
+      </p>
+    </div>
+  </div>
+
   <div class="flex gap-3 pt-2">
     <%= f.submit(@match.new_record? ? "Skapa match" : "Uppdatera match",
                  class: "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400 transition") %>
@@ -121,3 +150,56 @@
                 class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-slate-700 text-slate-200 hover:border-pink-400 hover:text-pink-300" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const citySelect = document.getElementById("match_city_id");
+    const locationSelect = document.getElementById("match_location_id");
+
+    if (!citySelect || !locationSelect) return;
+
+    const allOptions = Array.from(
+      locationSelect.querySelectorAll("option[data-city-id]")
+    );
+    const promptText = locationSelect.dataset.prompt || "Välj plats";
+
+    function filterLocations() {
+      const cityId = citySelect.value;
+      const currentValue = locationSelect.value;
+
+      // Clear current options
+      locationSelect.innerHTML = "";
+
+      // Add prompt
+      const promptOption = document.createElement("option");
+      promptOption.value = "";
+      promptOption.textContent = promptText;
+      locationSelect.appendChild(promptOption);
+
+      if (!cityId) {
+        locationSelect.disabled = true;
+        return;
+      }
+
+      locationSelect.disabled = false;
+
+      // Add only locations for the selected city
+      allOptions.forEach(function(option) {
+        if (option.dataset.cityId === cityId) {
+          locationSelect.appendChild(option);
+        }
+      });
+
+      // Try to restore previous selection if still valid
+      if (currentValue) {
+        locationSelect.value = currentValue;
+      }
+    }
+
+    // Initial state (handles edit form with preselected city/location)
+    filterLocations();
+
+    // Update when city changes
+    citySelect.addEventListener("change", filterLocations);
+  });
+</script>

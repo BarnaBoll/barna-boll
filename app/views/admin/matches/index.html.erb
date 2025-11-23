@@ -29,12 +29,29 @@
               <th class="px-4 py-3 text-left">Plats</th>
               <th class="px-4 py-3 text-left">Datum</th>
               <th class="px-4 py-3 text-left">Pris</th>
+              <th class="px-4 py-3 text-left">Påminnelse</th>
               <th class="px-4 py-3 text-right">Spelare (bokade / max)</th>
               <th class="px-4 py-3 text-right">Åtgärder</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800">
             <% @matches.each do |match| %>
+              <% reminder_text =
+                   if match.reminder_offset_minutes.present? && match.reminder_offset_minutes > 0
+                     mins = match.reminder_offset_minutes
+                     if mins % 1440 == 0
+                       days = mins / 1440
+                       "#{days} d innan"
+                     elsif mins % 60 == 0
+                       hours = mins / 60
+                       "#{hours} h innan"
+                     else
+                       "#{mins} min innan"
+                     end
+                   else
+                     "Ingen"
+                   end %>
+
               <tr>
                 <td class="px-4 py-3 align-top">
                   <%= link_to match.title,
@@ -57,6 +74,9 @@
                 </td>
                 <td class="px-4 py-3 align-top text-xs text-slate-300">
                   <%= match.price.present? ? "#{match.price.to_i} kr" : "–" %>
+                </td>
+                <td class="px-4 py-3 align-top text-xs text-slate-300">
+                  <%= reminder_text %>
                 </td>
                 <td class="px-4 py-3 align-top text-right text-xs text-slate-300">
                   <% booked = match.total_players %>

@@ -5,6 +5,7 @@ class UserTeamsController < ApplicationController
 
   def index
     @user_teams = current_user.user_teams.includes(:creator, :members)
+    @user_team  = UserTeam.new
   end
 
   def show
@@ -115,7 +116,7 @@ class UserTeamsController < ApplicationController
     return if @user_team.creator?(current_user)
 
     redirect_to authenticated_root_path,
-                alert: "You do not have permission to manage this team."
+              alert: "You do not have permission to manage this team."
   end
 
   def user_team_params

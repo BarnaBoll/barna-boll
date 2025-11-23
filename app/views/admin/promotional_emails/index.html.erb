@@ -1,0 +1,46 @@
+<!-- app/views/admin/promotional_emails/index.html.erb -->
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-xl font-semibold text-slate-100">Promotional Emails</h1>
+
+    <%= link_to "New Promotional Email",
+                new_admin_promotional_email_path,
+                class: "rounded-full px-4 py-2 text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500" %>
+  </div>
+
+  <div class="rounded-2xl border border-slate-800 bg-slate-950/70 divide-y divide-slate-800">
+    <% @promotional_emails.each do |email| %>
+      <div class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <p class="text-slate-100 font-semibold"><%= email.title %></p>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Subject: <%= email.subject %>
+            <% if email.sent_at %>
+              · <span class="text-emerald-400">Sent <%= time_ago_in_words(email.sent_at) %> ago</span>
+            <% elsif email.send_at %>
+              · <span class="text-orange-300">Scheduled: <%= l(email.send_at, format: :long) %></span>
+            <% else %>
+              · <span class="text-slate-500">Draft</span>
+            <% end %>
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <%= link_to "View",
+                      admin_promotional_email_path(email),
+                      class: "text-[11px] px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 hover:border-orange-400 hover:text-orange-300" %>
+
+          <%= link_to "Edit",
+                      edit_admin_promotional_email_path(email),
+                      class: "text-[11px] px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 hover:border-pink-400 hover:text-pink-300" %>
+
+          <%= link_to "Delete",
+                      admin_promotional_email_path(email),
+                      method: :delete,
+                      data: { confirm: "Are you sure you want to delete this email?" },
+                      class: "text-[11px] px-3 py-1.5 rounded-full border border-rose-700 text-rose-300 hover:bg-rose-700/20" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -47,14 +47,22 @@ module Admin
 
     def match_params
       params.require(:match).permit(
-        :title, :description, :price, :date, :time,
-        :city_id, :location_id,
-        :soft_limit_per_team, :hard_limit_total, :teams_count
+        :title,
+        :description,
+        :price,
+        :date,
+        :time,
+        :city_id,
+        :location_id,
+        :soft_limit_per_team,
+        :hard_limit_total,
+        :teams_count,
+        :reminder_offset_minutes
       )
     end
 
     def load_cities_and_locations
-      @cities = City.order(:name).includes(:locations)
+      @cities    = City.order(:name).includes(:locations)
       @locations = Location.includes(:city).order(:name)
     end
   end

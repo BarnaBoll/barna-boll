@@ -33,6 +33,20 @@ class MatchMailer < ApplicationMailer
     )
   end
 
+  def match_reminder(match_id, user_id)
+    @match = Match.includes(:city, :location).find(match_id)
+    @user  = User.find(user_id)
+
+    @maps_query = @match.location.address.presence ||
+                  [ @match.location.name, @match.city.name ].compact.join(", ")
+    @maps_url   = "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(@maps_query)}"
+
+    mail(
+      to: @user.email,
+      subject: "Påminnelse: #{@match.title} – #{l(@match.date, format: :long) rescue @match.date}"
+    )
+  end
+
   private
 
   def generate_ics(match)

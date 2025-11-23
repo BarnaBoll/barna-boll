@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   get "dashboards/show"
 
-  devise_for :users
+  devise_for :users,
+             controllers: {
+               omniauth_callbacks: "users/omniauth_callbacks"
+             }
 
   resource :profile,
           only: [ :show, :update, :destroy ],
@@ -51,6 +54,12 @@ Rails.application.routes.draw do
     resources :users do
       member do
         patch :toggle_admin
+      end
+    end
+
+    resources :promotional_emails do
+      member do
+        post :send_now
       end
     end
   end

@@ -36,6 +36,7 @@
         <div class="pointer-events-none absolute -bottom-12 left-0 h-28 w-40 rounded-full bg-pink-500/15 blur-3xl"></div>
 
         <div class="relative">
+
           <%= form_for(resource,
                        as: resource_name,
                        url: registration_path(resource_name),
@@ -125,6 +126,41 @@
                            class: "w-full inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition" %>
             </div>
           <% end %>
+
+          <!-- Divider (now between form and social, like login page) -->
+          <div class="relative my-5">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-slate-800"></div>
+            </div>
+            <div class="relative flex justify-center text-[11px]">
+              <span class="bg-slate-950/85 px-3 text-slate-500">
+                eller skapa konto med
+              </span>
+            </div>
+          </div>
+
+          <!-- Social register buttons (moved below form) -->
+          <div class="grid gap-2 mb-2">
+            <%= button_to user_google_oauth2_omniauth_authorize_path,
+                          method: :post,
+                          data: { turbo: false },
+                          class: "w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-2.5 text-sm font-medium text-slate-100 hover:bg-slate-800/80 transition" do %>
+              <%= image_tag "google.svg",
+                            alt: "Google",
+                            class: "h-4 w-4" %>
+              <span>Skapa konto med Google</span>
+            <% end %>
+
+            <%= button_to user_facebook_omniauth_authorize_path,
+                          method: :post,
+                          data: { turbo: false },
+                          class: "w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-2.5 text-sm font-medium text-slate-100 hover:bg-slate-800/80 transition" do %>
+              <%= image_tag "facebook.svg",
+                            alt: "Facebook",
+                            class: "h-4 w-4" %>
+              <span>Skapa konto med Facebook</span>
+            <% end %>
+          </div>
 
           <%= render "devise/shared/links" %>
         </div>

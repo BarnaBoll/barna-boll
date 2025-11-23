@@ -7,9 +7,8 @@ class DashboardsController < ApplicationController
 
     # Teams the user is part of
     @user_teams = @user.user_teams.includes(:creator, :members)
-    @user_team  = UserTeam.new
 
-    # Upcoming matches for you OR any of your teammates (from user teams)
+    # Matches the user (or teammates) is registered for
     member_ids_from_teams =
       @user_teams
         .joins(:members)
@@ -18,7 +17,7 @@ class DashboardsController < ApplicationController
 
     ids_for_scope = ([ @user.id ] + member_ids_from_teams).uniq
 
-    @upcoming_matches =
+    @registered_matches =
       if ids_for_scope.empty?
         Match.none
       else
@@ -30,5 +29,38 @@ class DashboardsController < ApplicationController
           .distinct
           .order(:date, :time)
       end
+
+    # ---- HERE is the important part ----
+    # Upcoming matches to register for (next 5), with optional city filter
+    @cities = City.order(:name)
+
+    @selected_city =
+      if params[:city].present?
+        begin
+          City.from_param(params[:city])
+        rescue ActiveRecord::RecordNotFound
+          nil
+        end
+      end
+
+    @selected_city_color =
+      if @selected_city
+        @selected_city.try(:accent_color).presence ||
+          @selected_city.try(:color_hex).presence ||
+          @selected_city.try(:primary_color).presence ||
+          @selected_city.try(:color).presence
+      end
+
+    discover_scope =
+      Match
+        .includes(:city, :location)
+        .where("date >= ?", Date.today)
+
+    discover_scope = discover_scope.where(city: @selected_city) if @selected_city
+
+    @discover_matches =
+      discover_scope
+        .order(:date, :time)
+        .limit(5)
   end
 end

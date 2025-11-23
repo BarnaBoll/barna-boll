@@ -1,0 +1,133 @@
+<%# app/views/admin/promotional_emails/show.html.erb %>
+<% content_for :title, "Admin – #{@promotional_email.title}" %>
+
+<div class="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-50">
+  <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <!-- Header -->
+    <header class="flex items-center justify-between gap-3">
+      <div>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-orange-300 mb-1">
+          Admin · Utskick
+        </p>
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+          <%= @promotional_email.title %>
+        </h1>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <%= link_to "Back",
+                    admin_promotional_emails_path,
+                    class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] sm:text-xs font-semibold border border-slate-700 text-slate-200 hover:border-orange-400 hover:text-orange-300" %>
+      </div>
+    </header>
+
+    <!-- Main card -->
+    <section class="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 sm:p-6 space-y-5">
+      <!-- Subject + status -->
+      <div class="space-y-1">
+        <p class="text-sm text-slate-300">
+          <span class="font-semibold text-slate-100">Subject:</span>
+          <span class="ml-1"><%= @promotional_email.subject %></span>
+        </p>
+
+        <p class="text-sm">
+          <span class="font-semibold text-slate-100">Status:</span>
+          <% if @promotional_email.sent_at.present? %>
+            <span class="ml-1 text-emerald-400">
+              Sent <%= time_ago_in_words(@promotional_email.sent_at) %> ago
+            </span>
+          <% elsif @promotional_email.send_at.present? %>
+            <span class="ml-1 text-amber-300">
+              Scheduled for
+              <%= l(@promotional_email.send_at, format: :long) rescue @promotional_email.send_at.to_s %>
+            </span>
+          <% else %>
+            <span class="ml-1 text-slate-500">
+              Draft (not scheduled)
+            </span>
+          <% end %>
+        </p>
+      </div>
+
+      <hr class="border-slate-800 my-2">
+
+      <!-- Intro -->
+      <div class="space-y-1">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          Intro
+        </p>
+        <% if @promotional_email.intro.present? %>
+          <p class="text-sm text-slate-100">
+            <%= @promotional_email.intro %>
+          </p>
+        <% else %>
+          <p class="text-sm text-slate-500">
+            Ingen intro angiven.
+          </p>
+        <% end %>
+      </div>
+
+      <!-- Body -->
+      <div class="space-y-1">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          Body
+        </p>
+        <% if @promotional_email.body.present? %>
+          <div class="text-sm text-slate-100 leading-relaxed">
+            <%= simple_format(@promotional_email.body) %>
+          </div>
+        <% else %>
+          <p class="text-sm text-slate-500">
+            Ingen brödtext angiven.
+          </p>
+        <% end %>
+      </div>
+
+      <!-- CTA -->
+      <div class="space-y-2">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          CTA Button
+        </p>
+
+        <% if @promotional_email.cta_url.present? %>
+          <div class="flex flex-col gap-1">
+            <a href="<%= @promotional_email.cta_url %>"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="inline-flex items-center justify-center rounded-full px-5 py-2 text-xs sm:text-sm font-semibold text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 shadow-lg shadow-orange-900/40 hover:from-orange-300 hover:to-pink-400 transition">
+              <%= @promotional_email.cta_label.presence || "Öppna Barnaboll" %>
+            </a>
+            <p class="text-[11px] text-slate-500 break-all">
+              <%= @promotional_email.cta_url %>
+            </p>
+          </div>
+        <% else %>
+          <p class="text-sm text-slate-500">
+            Ingen CTA-knapp definierad.
+          </p>
+        <% end %>
+      </div>
+
+      <!-- Actions -->
+      <div class="pt-4 flex flex-wrap gap-3">
+        <%= link_to "Edit",
+                    edit_admin_promotional_email_path(@promotional_email),
+                    class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] sm:text-xs font-semibold border border-slate-700 text-slate-200 hover:border-orange-400 hover:text-orange-300" %>
+
+        <% if @promotional_email.sent_at.blank? %>
+          <%= button_to "Send Now",
+                        send_now_admin_promotional_email_path(@promotional_email),
+                        method: :post,
+                        data: { confirm: "Skicka detta utskick nu till alla verifierade användare?" },
+                        class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] sm:text-xs font-semibold border border-emerald-500 text-emerald-300 hover:bg-emerald-500/10" %>
+        <% end %>
+
+        <%= button_to "Delete",
+                      admin_promotional_email_path(@promotional_email),
+                      method: :delete,
+                      data: { confirm: "Är du säker på att du vill ta bort det här utskicket?" },
+                      class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] sm:text-xs font-semibold border border-red-500/60 text-red-300 hover:bg-red-500/10" %>
+      </div>
+    </section>
+  </div>
+</div>

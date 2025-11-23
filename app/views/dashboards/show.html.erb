@@ -32,207 +32,207 @@
       </div>
     </section>
 
-    <!-- Layout: Left = upcoming to register, Right = registered + teams -->
+    <!-- Layout: Left = upcoming to register, Right = registered -->
     <section class="grid gap-5 lg:grid-cols-[1.5fr_1.1fr]">
 
       <!-- Left: Upcoming matches to register for -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm space-y-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-base font-semibold">Boka nästa match</h2>
-            <p class="text-xs text-slate-400">
-              Se de närmaste kommande matcherna och boka direkt här.
-            </p>
-          </div>
+      <div class="flex flex-col">
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm space-y-4 h-full flex flex-col">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-base font-semibold">Boka nästa match</h2>
+              <p class="text-xs text-slate-400">
+                Se de närmaste kommande matcherna och boka direkt här.
+              </p>
+            </div>
 
-          <!-- City filter (same style as schedule page, but simpler) -->
-          <div class="w-full sm:w-auto flex justify-end">
-            <%= form_with url: authenticated_root_path,
-                          method: :get,
-                          local: true,
-                          class: "text-xs" do %>
-              <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 pl-3 pr-1 py-1.5"
-                   data-city-select-wrapper>
-                <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  Stad
-                </span>
+            <!-- City filter (same style as schedule page, but enklare) -->
+            <div class="w-full sm:w-auto flex justify-end">
+              <%= form_with url: authenticated_root_path,
+                            method: :get,
+                            local: true,
+                            class: "text-xs" do %>
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 pl-3 pr-1 py-1.5"
+                     data-city-select-wrapper>
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Stad
+                  </span>
 
-                <% current_city_label = @selected_city&.name || "Alla städer" %>
-                <% current_city_color = @selected_city_color.presence || "#e5e7eb" %>
+                  <% current_city_label = @selected_city&.name || "Alla städer" %>
+                  <% current_city_color = @selected_city_color.presence || "#e5e7eb" %>
 
-                <%= hidden_field_tag :city, params[:city].to_s, id: "dashboard-city-input" %>
+                  <%= hidden_field_tag :city, params[:city].to_s, id: "dashboard-city-input" %>
 
-                <button type="button"
-                        data-city-select-button
-                        class="inline-flex items-center gap-2 rounded-full bg-transparent px-2 py-0.5 text-[11px] text-slate-100 focus:outline-none focus:ring-0">
-                  <span class="h-1.5 w-1.5 rounded-full"
-                        data-city-dot
-                        style="background-color: <%= current_city_color %>;"></span>
-                  <span data-city-label><%= current_city_label %></span>
-                </button>
-
-                <span class="ml-1 text-[10px] text-slate-400">▾</span>
-
-                <div data-city-select-menu
-                     class="absolute z-30 mt-32 right-4 md:right-auto md:translate-x-0 w-48 rounded-2xl border border-slate-700 bg-slate-900/95 shadow-xl py-1 hidden">
-                  <!-- "Alla städer" -->
                   <button type="button"
-                          class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] text-slate-100 text-left hover:bg-slate-800/80"
-                          data-city-option
-                          data-value=""
-                          data-label="Alla städer"
-                          data-color="#e5e7eb">
+                          data-city-select-button
+                          class="inline-flex items-center gap-2 rounded-full bg-transparent px-2 py-0.5 text-[11px] text-slate-100 focus:outline-none focus:ring-0">
                     <span class="h-1.5 w-1.5 rounded-full"
-                          style="background-color: #e5e7eb;"></span>
-                    <span>Alla städer</span>
+                          data-city-dot
+                          style="background-color: <%= current_city_color %>;"></span>
+                    <span data-city-label><%= current_city_label %></span>
                   </button>
 
-                  <% @cities.each do |city| %>
-                    <% value = city.to_param %>
-                    <% color =
-                         if city.respond_to?(:accent_color) && city.accent_color.present?
-                           city.accent_color
-                         elsif city.respond_to?(:color_hex) && city.color_hex.present?
-                           city.color_hex
-                         elsif city.respond_to?(:primary_color) && city.primary_color.present?
-                           city.primary_color
-                         elsif city.respond_to?(:color) && city.color.present?
-                           city.color
-                         else
-                           "#f97316"
-                         end %>
+                  <span class="ml-1 text-[10px] text-slate-400">▾</span>
+
+                  <div data-city-select-menu
+                       class="absolute z-30 mt-32 right-4 md:right-auto md:translate-x-0 w-48 rounded-2xl border border-slate-700 bg-slate-900/95 shadow-xl py-1 hidden">
+                    <!-- "Alla städer" -->
                     <button type="button"
                             class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] text-slate-100 text-left hover:bg-slate-800/80"
                             data-city-option
-                            data-value="<%= value %>"
-                            data-label="<%= city.name %>"
-                            data-color="<%= color %>">
+                            data-value=""
+                            data-label="Alla städer"
+                            data-color="#e5e7eb">
                       <span class="h-1.5 w-1.5 rounded-full"
-                            style="background-color: <%= color %>;"></span>
-                      <span><%= city.name %></span>
+                            style="background-color: #e5e7eb;"></span>
+                      <span>Alla städer</span>
                     </button>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
 
-        <% if @discover_matches.blank? %>
-          <p class="text-xs text-slate-400">
-            Inga kommande matcher hittades för detta filter. Testa en annan stad eller kolla hela
-            <%= link_to "matchkalendern", schedule_path, class: "underline decoration-dotted hover:text-orange-300" %>.
-          </p>
-        <% else %>
-          <div class="space-y-3">
-            <% @discover_matches.each do |match| %>
-              <% booked   = match.total_players %>
-              <% capacity = match.hard_limit_total || 0 %>
-              <% ratio    = capacity.positive? ? (booked.to_f / capacity.to_f) : 0.0 %>
-              <% full     = capacity.positive? && booked >= capacity %>
-
-              <% already_registered =
-                   match.registrations.where(user_id: current_user.id).exists? ||
-                     match.registrations.where(user_team_id: current_user.user_teams.select(:id)).exists? %>
-
-              <% disabled = full || already_registered %>
-              <% city_dot_color = match.city&.color.presence || "#f97316" %>
-
-              <div class="rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2.5 space-y-1.5">
-                <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <div class="space-y-1">
-                    <div class="flex flex-wrap items-center gap-2">
-                      <p class="text-sm font-semibold text-slate-50">
-                        <%= match.title %>
-                      </p>
-                      <span class="inline-flex items-center gap-1 rounded-full border border-slate-700 px-2 py-0.5 text-[11px] text-slate-300">
+                    <% @cities.each do |city| %>
+                      <% value = city.to_param %>
+                      <% color =
+                           if city.respond_to?(:accent_color) && city.accent_color.present?
+                             city.accent_color
+                           elsif city.respond_to?(:color_hex) && city.color_hex.present?
+                             city.color_hex
+                           elsif city.respond_to?(:primary_color) && city.primary_color.present?
+                             city.primary_color
+                           elsif city.respond_to?(:color) && city.color.present?
+                             city.color
+                           else
+                             "#f97316"
+                           end %>
+                      <button type="button"
+                              class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] text-slate-100 text-left hover:bg-slate-800/80"
+                              data-city-option
+                              data-value="<%= value %>"
+                              data-label="<%= city.name %>"
+                              data-color="<%= color %>">
                         <span class="h-1.5 w-1.5 rounded-full"
-                              style="background-color: <%= city_dot_color %>;"></span>
-                        <%= match.city.name %>
-                      </span>
-                      <% if match.location.present? %>
+                              style="background-color: <%= color %>;"></span>
+                        <span><%= city.name %></span>
+                      </button>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <% if @discover_matches.blank? %>
+            <p class="text-xs text-slate-400 flex-1">
+              Inga kommande matcher hittades för detta filter. Testa en annan stad eller kolla hela
+              <%= link_to "matchkalendern", schedule_path, class: "underline decoration-dotted hover:text-orange-300" %>.
+            </p>
+          <% else %>
+            <div class="space-y-3 flex-1">
+              <% @discover_matches.each do |match| %>
+                <% booked   = match.total_players %>
+                <% capacity = match.hard_limit_total || 0 %>
+                <% ratio    = capacity.positive? ? (booked.to_f / capacity.to_f) : 0.0 %>
+                <% full     = capacity.positive? && booked >= capacity %>
+
+                <% already_registered =
+                     match.registrations.where(user_id: current_user.id).exists? ||
+                       match.registrations.where(user_team_id: current_user.user_teams.select(:id)).exists? %>
+
+                <% disabled = full || already_registered %>
+                <% city_dot_color = match.city&.color.presence || "#f97316" %>
+
+                <div class="rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2.5 space-y-1.5">
+                  <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="space-y-1">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <p class="text-sm font-semibold text-slate-50">
+                          <%= match.title %>
+                        </p>
                         <span class="inline-flex items-center gap-1 rounded-full border border-slate-700 px-2 py-0.5 text-[11px] text-slate-300">
-                          <%= match.location.name %>
+                          <span class="h-1.5 w-1.5 rounded-full"
+                                style="background-color: <%= city_dot_color %>;"></span>
+                          <%= match.city.name %>
                         </span>
-                      <% end %>
+                        <% if match.location.present? %>
+                          <span class="inline-flex items-center gap-1 rounded-full border border-slate-700 px-2 py-0.5 text-[11px] text-slate-300">
+                            <%= match.location.name %>
+                          </span>
+                        <% end %>
+                      </div>
+
+                      <p class="text-[11px] text-slate-400">
+                        <%= l(match.date, format: :short) rescue match.date.to_s %>
+                        <% if match.time %>
+                          · <span class="font-mono text-slate-200"><%= match.time.strftime("%H:%M") %></span>
+                        <% end %>
+                        <% if match.price.present? %>
+                          · <%= match.price.to_i %> kr
+                        <% end %>
+                      </p>
                     </div>
 
-                    <p class="text-[11px] text-slate-400">
-                      <%= l(match.date, format: :short) rescue match.date.to_s %>
-                      <% if match.time %>
-                        · <span class="font-mono text-slate-200"><%= match.time.strftime("%H:%M") %></span>
-                      <% end %>
-                      <% if match.price.present? %>
-                        · <%= match.price.to_i %> kr
-                      <% end %>
-                    </p>
-                  </div>
-
-                  <div class="mt-2 sm:mt-0 flex flex-col items-stretch gap-2 sm:items-end sm:text-right">
-                    <div class="w-full sm:w-40">
-                      <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
-                        <span>Platser</span>
-                        <span class="font-mono text-slate-200">
-                          <%= booked %> / <%= capacity %>
-                        </span>
-                      </div>
-                      <% status_color =
-                           if capacity.zero?
-                             "bg-slate-500"
-                           elsif ratio >= 1.0
-                             "bg-rose-400"
-                           elsif ratio >= 0.7
-                             "bg-amber-300"
-                           else
-                             "bg-emerald-400"
-                           end %>
-                      <div class="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                        <div class="h-full <%= status_color %>"
-                             style="width: <%= [[(ratio * 100).round, 0].max, 100].min %>%;">
+                    <div class="mt-2 sm:mt-0 flex flex-col items-stretch gap-2 sm:items-end sm:text-right">
+                      <div class="w-full sm:w-40">
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
+                          <span>Platser</span>
+                          <span class="font-mono text-slate-200">
+                            <%= booked %> / <%= capacity %>
+                          </span>
+                        </div>
+                        <% status_color =
+                             if capacity.zero?
+                               "bg-slate-500"
+                             elsif ratio >= 1.0
+                               "bg-rose-400"
+                             elsif ratio >= 0.7
+                               "bg-amber-300"
+                             else
+                               "bg-emerald-400"
+                             end %>
+                        <div class="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                          <div class="h-full <%= status_color %>"
+                               style="width: <%= [[(ratio * 100).round, 0].max, 100].min %>%;">
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <button
-                      type="button"
-                      class="mt-1 inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
-                      <% unless disabled %>
-                        data-open-register-modal
-                        data-match-id="<%= match.id %>"
-                        data-match-title="<%= match.title %>"
-                        data-match-city="<%= match.city.name %>"
-                        data-match-datetime="<%= [
-                          (l(match.date, format: :short) rescue match.date.to_s),
-                          (match.time&.strftime('%H:%M'))
-                        ].compact.join(' · ') %>"
-                        data-user-signed-in="true"
-                      <% end %>>
-                      <% if full %>
-                        Fullbokat
-                      <% elsif already_registered %>
-                        Redan anmäld
-                      <% else %>
-                        Boka plats
-                      <% end %>
-                    </button>
+                      <button
+                        type="button"
+                        class="mt-1 inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                        <% unless disabled %>
+                          data-open-register-modal
+                          data-match-id="<%= match.id %>"
+                          data-match-title="<%= match.title %>"
+                          data-match-city="<%= match.city.name %>"
+                          data-match-datetime="<%= [
+                            (l(match.date, format: :short) rescue match.date.to_s),
+                            (match.time&.strftime('%H:%M'))
+                          ].compact.join(' · ') %>"
+                          data-user-signed-in="true"
+                        <% end %>>
+                        <% if full %>
+                          Fullbokat
+                        <% elsif already_registered %>
+                          Redan anmäld
+                        <% else %>
+                          Boka plats
+                        <% end %>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            <% end %>
-          </div>
+              <% end %>
+            </div>
 
-          <p class="text-[11px] text-slate-500 mt-1">
-            Vill du se alla matcher? Gå till
-            <%= link_to "matchkalendern", schedule_path, class: "underline decoration-dotted hover:text-orange-300" %>.
-          </p>
-        <% end %>
+            <p class="text-[11px] text-slate-500 mt-1">
+              Vill du se alla matcher? Gå till
+              <%= link_to "matchkalendern", schedule_path, class: "underline decoration-dotted hover:text-orange-300" %>.
+            </p>
+          <% end %>
+        </div>
       </div>
 
-      <!-- Right: Registered matches + Teams -->
-      <aside class="space-y-4">
-
-        <!-- Registered matches -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+      <!-- Right: Registered matches (same height as left) -->
+      <div class="flex flex-col">
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm h-full flex flex-col">
           <div class="flex items-center justify-between mb-3">
             <div>
               <h2 class="text-base font-semibold">Dina bokade matcher</h2>
@@ -246,11 +246,11 @@
           </div>
 
           <% if @registered_matches.blank? %>
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-slate-400 flex-1">
               Du har inga kommande matcher. Boka en via listan till vänster eller kalendern.
             </p>
           <% else %>
-            <div class="space-y-3">
+            <div class="space-y-3 flex-1">
               <% @registered_matches.each do |match| %>
                 <% booked   = match.total_players %>
                 <% capacity = match.hard_limit_total || 0 %>
@@ -303,70 +303,73 @@
             </div>
           <% end %>
         </div>
+      </div>
 
-        <!-- Teams (no create form) -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h2 class="text-base font-semibold">Dina lag</h2>
-              <p class="text-xs text-slate-400">
-                Lag du är med i, som spelare eller skapare.
-              </p>
-            </div>
+    </section>
 
-            <%= link_to "Hantera lag",
-                        user_teams_path,
-                        class: "text-[11px] text-slate-400 hover:text-orange-300" %>
+    <!-- Full-width: Dina lag -->
+    <section>
+      <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-base font-semibold">Dina lag</h2>
+            <p class="text-xs text-slate-400">
+              Lag du är med i, som spelare eller skapare.
+            </p>
           </div>
 
-          <% if @user_teams.blank? %>
-            <p class="text-xs text-slate-400">
-              Du är inte med i något lag än.
-              <%= link_to "Skapa eller gå med i lag här.",
-                          user_teams_path,
-                          class: "underline decoration-dotted hover:text-orange-300" %>
-            </p>
-          <% else %>
-            <div class="space-y-3">
-              <% @user_teams.each do |team| %>
-                <div class="rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2.5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <div class="space-y-1">
-                    <div class="flex items-center gap-2 flex-wrap">
-                      <p class="text-sm font-semibold text-slate-50">
-                        <%= team.name %>
-                      </p>
-                      <% if team.creator?(current_user) %>
-                        <span class="rounded-full border border-emerald-500/60 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
-                          Du är skapare
-                        </span>
-                      <% end %>
-                    </div>
-
-                    <% if team.description.present? %>
-                      <p class="text-[11px] text-slate-400">
-                        <%= truncate(team.description, length: 120) %>
-                      </p>
-                    <% end %>
-
-                    <p class="text-[11px] text-slate-500">
-                      <span class="font-semibold"><%= team.members.count %></span> spelare ·
-                      Skapad av <span class="font-mono text-slate-300"><%= team.creator.name_or_email %></span>
-                    </p>
-                  </div>
-
-                  <div class="mt-2 sm:mt-0 flex items-center gap-2 justify-end">
-                    <%= link_to "Visa lag",
-                                user_team_path(team),
-                                class: "inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold text-slate-950 bg-slate-50 hover:bg-slate-200 transition" %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+          <%= link_to "Hantera lag",
+                      user_teams_path,
+                      class: "text-[11px] text-slate-400 hover:text-orange-300" %>
         </div>
 
-      </aside>
+        <% if @user_teams.blank? %>
+          <p class="text-xs text-slate-400">
+            Du är inte med i något lag än.
+            <%= link_to "Skapa eller gå med i lag här.",
+                        user_teams_path,
+                        class: "underline decoration-dotted hover:text-orange-300" %>
+          </p>
+        <% else %>
+          <div class="space-y-3">
+            <% @user_teams.each do |team| %>
+              <div class="rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2.5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <p class="text-sm font-semibold text-slate-50">
+                      <%= team.name %>
+                    </p>
+                    <% if team.creator?(current_user) %>
+                      <span class="rounded-full border border-emerald-500/60 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                        Du är skapare
+                      </span>
+                    <% end %>
+                  </div>
+
+                  <% if team.description.present? %>
+                    <p class="text-[11px] text-slate-400">
+                      <%= truncate(team.description, length: 120) %>
+                    </p>
+                  <% end %>
+
+                  <p class="text-[11px] text-slate-500">
+                    <span class="font-semibold"><%= team.members.count %></span> spelare ·
+                    Skapad av <span class="font-mono text-slate-300"><%= team.creator.name_or_email %></span>
+                  </p>
+                </div>
+
+                <div class="mt-2 sm:mt-0 flex items-center gap-2 justify-end">
+                  <%= link_to "Visa lag",
+                              user_team_path(team),
+                              class: "inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold text-slate-950 bg-slate-50 hover:bg-slate-200 transition" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </section>
+
   </div>
 </div>
 

@@ -44,6 +44,16 @@ module Admin
       redirect_to admin_user_path(@user), notice: "Admin set to #{@user.admin?}."
     end
 
+    def lock
+      @user.lock_access!(send_instructions: false)
+      redirect_to admin_user_path(@user), notice: "Användaren har blivit låst."
+    end
+
+    def unlock
+      @user.unlock_access!
+      redirect_to admin_user_path(@user), notice: "Användaren har låsts upp."
+    end
+
     private
 
     def set_user

@@ -9,9 +9,7 @@
           Admin · Användare
         </p>
         <h1 class="text-2xl font-semibold tracking-tight"><%= @user.name_or_email %></h1>
-        <p class="text-sm text-slate-400">
-          <%= @user.email %>
-        </p>
+        <p class="text-sm text-slate-400"><%= @user.email %></p>
       </div>
 
       <div class="flex flex-col sm:flex-row gap-2">
@@ -22,7 +20,7 @@
         <%= button_to "Ta bort",
                       admin_user_path(@user),
                       method: :delete,
-                      data: { confirm: "Är du säker på att du vill ta bort den här användaren?" },
+                      data: { confirm: "Är du helt säker? Detta raderar användaren permanent." },
                       class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-red-500/60 text-red-300 hover:bg-red-500/10" %>
       </div>
     </div>
@@ -42,36 +40,50 @@
           <span class="text-slate-500 text-[11px]">Bekräftad:</span>
           <%= @user.confirmed_at? ? l(@user.confirmed_at, format: :short) : "Nej" %>
         </p>
+        <p>
+          <span class="text-slate-500 text-[11px]">Låst:</span>
+          <%= @user.access_locked? ? "Ja (konto låst)" : "Nej" %>
+        </p>
       </div>
 
       <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm space-y-2">
         <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-[0.18em] mb-1">
           Aktivitet
         </h2>
-        <p>
-          <span class="text-slate-500 text-[11px]">Skapad:</span>
-          <%= l(@user.created_at, format: :short) %>
-        </p>
-        <p>
-          <span class="text-slate-500 text-[11px]">Senaste inloggning:</span>
+        <p><span class="text-slate-500 text-[11px]">Skapad:</span> <%= l(@user.created_at, format: :short) %></p>
+        <p><span class="text-slate-500 text-[11px]">Senaste inloggning:</span>
           <%= @user.last_sign_in_at ? l(@user.last_sign_in_at, format: :short) : "—" %>
         </p>
-        <p>
-          <span class="text-slate-500 text-[11px]">Antal inloggningar:</span>
-          <%= @user.sign_in_count %>
-        </p>
+        <p><span class="text-slate-500 text-[11px]">Antal inloggningar:</span> <%= @user.sign_in_count %></p>
       </div>
     </section>
 
     <section class="flex flex-wrap items-center gap-3 pt-2">
+
+      <% if @user.access_locked? %>
+        <%= button_to "Lås upp användare",
+                      unlock_admin_user_path(@user),
+                      method: :patch,
+                      data: { confirm: "Låsa upp användaren? De kommer kunna logga in igen." },
+                      class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-emerald-500/60 text-emerald-300 hover:bg-emerald-500/10" %>
+      <% else %>
+        <%= button_to "Lås användare",
+                      lock_admin_user_path(@user),
+                      method: :patch,
+                      data: { confirm: "Är du säker? Användaren kommer INTE kunna logga in." },
+                      class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-red-500/60 text-red-300 hover:bg-red-500/10" %>
+      <% end %>
+
       <%= button_to(@user.admin? ? "Ta bort admin-roll" : "Gör till admin",
                     toggle_admin_admin_user_path(@user),
                     method: :patch,
+                    data: { confirm: "Är du säker att du vill ändra admin-rättigheter?" },
                     class: "inline-flex items-center justify-center rounded-full px-4 py-2 text-[11px] font-semibold border border-slate-700 text-slate-200 hover:border-pink-400 hover:text-pink-300") %>
 
       <%= link_to "Tillbaka till listan",
                   admin_users_path,
                   class: "text-[11px] text-slate-400 hover:text-pink-300" %>
     </section>
+
   </div>
 </div>

@@ -54,6 +54,8 @@ Rails.application.routes.draw do
     resources :users do
       member do
         patch :toggle_admin
+        patch :lock
+        patch :unlock
       end
     end
 

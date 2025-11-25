@@ -42,3 +42,5 @@ bin/rails tailwindcss:build
 git add .
 git commit -am "make it better"
 git push heroku main
+
+heroku run rails db:migrate

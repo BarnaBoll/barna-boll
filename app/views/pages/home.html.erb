@@ -1,6 +1,12 @@
 <% content_for :title, "Barnaboll – Fotboll som den ska spelas" %>
 <% content_for :meta_description, "Barnaboll är en fotbollscommunity för spelare som vill ha tempo, nivå och gemenskap. Winner-stays-on-sessioner i Malmö, Uppsala, Stockholm & Göteborg." %>
 
+<% content_for :head do %>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<% end %>
+
 <%
   city_colors = (@city_colors || {}).transform_keys { |k| k.to_s.downcase }
 %>
@@ -140,6 +146,7 @@
 
   <!-- HERO: full-bleed, hugs header -->
   <section
+    id="hero"
     class="relative w-screen left-1/2 -translate-x-1/2 -mt-6 sm:-mt-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden"
   >
     <!-- subtle noise / glow -->
@@ -150,8 +157,8 @@
     <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
       <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
         <!-- Left: copy -->
-        <div class="w-full lg:w-1/2">
-          <p class="text-[11px] font-semibold tracking-[0.25em] uppercase text-orange-300 mb-3">
+        <div class="w-full lg:w-1/2 hero-fade">
+          <p class="text-[11px] font-semibold tracking-[0.25em] uppercase text-orange-300 mb-3 section-title">
             Barnaboll · Winner stays on
           </p>
 
@@ -199,7 +206,7 @@
         </div>
 
         <!-- Right: hero image / card -->
-        <div class="w-full lg:w-1/2 flex justify-center">
+        <div class="w-full lg:w-1/2 flex justify-center hero-fade">
           <div class="relative w-full max-w-md">
             <div class="absolute -top-10 -left-10 w-32 h-32 bg-orange-500/25 rounded-full blur-3xl"></div>
             <div class="absolute -bottom-10 -right-10 w-36 h-36 bg-pink-500/25 rounded-full blur-3xl"></div>
@@ -221,7 +228,7 @@
   <!-- Cities / feature cards -->
   <section class="bb-section-shell">
     <div class="max-w-5xl mx-auto px-4 py-10 sm:py-12">
-      <h2 class="text-base font-semibold text-slate-100 mb-1">
+      <h2 class="section-title text-base font-semibold text-slate-100 mb-1">
         Fyra städer, samma vibe.
       </h2>
       <p class="text-sm text-slate-400 mb-6">
@@ -243,7 +250,7 @@
             <% card_style = nil %>
           <% end %>
 
-          <div class="bb-card-elevated bb-city-card rounded-2xl border border-slate-800 bg-slate-950/70 p-4"
+          <div class="bb-card-elevated bb-city-card hobby-card rounded-2xl border border-slate-800 bg-slate-950/70 p-4"
                style="<%= card_style %>">
             <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-1">
               Stad
@@ -258,7 +265,7 @@
 
   <!--  REGISTER FOR MATCHES   -->
   <section
-    class="relative w-screen left-1/2 -translate-x-1/2 overflow-hidden bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950"
+    class="relative w-screen left-1/2 -translate-x-1/2 overflow-hidden bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 bb-section-shell"
   >
     <!-- subtle colored glows / texture -->
     <div class="pointer-events-none absolute inset-0 opacity-40">
@@ -267,7 +274,7 @@
 
     <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12 flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
       <div class="flex-1">
-        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300 mb-2">
+        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300 mb-2 section-title">
           Nästa steg
         </p>
         <h2 class="text-xl sm:text-2xl font-semibold text-slate-50 mb-2">
@@ -295,7 +302,7 @@
   <section id="how-it-works" class="bb-section-shell">
     <div class="max-w-5xl mx-auto px-4 py-10 sm:py-12 grid gap-8 md:grid-cols-2">
       <div>
-        <h2 class="text-base font-semibold text-slate-100 mb-2">
+        <h2 class="section-title text-base font-semibold text-slate-100 mb-2">
           Så funkar Barnaboll.
         </h2>
         <p class="text-sm text-slate-400 mb-4">
@@ -303,16 +310,16 @@
           Du dyker upp, vi fixar hall, upplägg och vibe.
         </p>
         <ul class="bb-step-list space-y-3 text-sm text-slate-300">
-          <li>
+          <li class="timeline-item">
             Vi släpper kommande sessions på Instagram <span class="font-semibold">@barnaboll</span>.
           </li>
-          <li>
+          <li class="timeline-item">
             Du anmäler dig via DM med namn, stad, nivå och om du kommer själv eller med vänner.
           </li>
-          <li>
+          <li class="timeline-item">
             Vi bekräftar din plats och skickar tid, plats och format (t.ex. futsal / 5v5).
           </li>
-          <li>
+          <li class="timeline-item">
             På plats kör vi winner-stays-on – du ger allt på planen, vi sköter rotation och struktur.
           </li>
         </ul>
@@ -322,7 +329,7 @@
       </div>
 
       <div class="space-y-4">
-        <div>
+        <div class="hobby-card">
           <h3 class="text-sm font-semibold text-slate-100 mb-2">
             Vad du alltid kan räkna med
           </h3>
@@ -333,7 +340,7 @@
           </ul>
         </div>
 
-        <div>
+        <div class="hobby-card">
           <h3 class="text-sm font-semibold text-slate-100 mb-2">
             För vem?
           </h3>
@@ -349,7 +356,7 @@
 
   <!-- REGISTER / COMMUNITY   -->
   <section
-    class="relative w-screen left-1/2 -translate-x-1/2 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+    class="relative w-screen left-1/2 -translate-x-1/2 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 bb-section-shell"
   >
     <!-- subtle glow background -->
     <div class="pointer-events-none absolute inset-0 opacity-50">
@@ -358,7 +365,7 @@
 
     <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12 space-y-6">
       <div class="text-center">
-        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-300 mb-2">
+        <p class="section-title text-[11px] uppercase tracking-[0.18em] text-slate-300 mb-2">
           Nästa steg
         </p>
         <h2 class="text-xl sm:text-2xl font-semibold text-slate-50">
@@ -368,7 +375,7 @@
 
       <div class="grid gap-4 md:grid-cols-2">
         <!-- Instagram card -->
-        <div class="relative rounded-[1.75rem] border border-orange-400/30 bg-slate-950/80 px-6 py-7 shadow-[0_0_60px_rgba(249,115,22,0.15)]">
+        <div class="recipe-card relative rounded-[1.75rem] border border-orange-400/30 bg-slate-950/80 px-6 py-7 shadow-[0_0_60px_rgba(249,115,22,0.15)]">
           <div class="pointer-events-none absolute inset-0 rounded-[1.75rem] border border-orange-400/10"></div>
 
           <h3 class="text-sm font-semibold text-slate-50 mb-2 text-center md:text-left flex items-center justify-center md:justify-start gap-2">
@@ -397,7 +404,7 @@
         </div>
 
         <!-- WhatsApp card -->
-        <div class="relative rounded-[1.75rem] border border-emerald-400/40 bg-slate-950/80 px-6 py-7 shadow-[0_0_60px_rgba(16,185,129,0.18)]">
+        <div class="recipe-card relative rounded-[1.75rem] border border-emerald-400/40 bg-slate-950/80 px-6 py-7 shadow-[0_0_60px_rgba(16,185,129,0.18)]">
           <div class="pointer-events-none absolute inset-0 rounded-[1.75rem] border border-emerald-400/10"></div>
 
           <h3 class="text-sm font-semibold text-slate-50 mb-2 text-center md:text-left flex items-center justify-center md:justify-start gap-2">
@@ -432,7 +439,7 @@
     <div class="max-w-5xl mx-auto px-4 py-10 sm:py-12">
       <div class="flex items-center justify-between gap-4 mb-4">
         <div>
-          <h2 class="text-base font-semibold text-slate-100">
+          <h2 class="section-title text-base font-semibold text-slate-100">
             Highlights från planen.
           </h2>
           <p class="text-sm text-slate-400">
@@ -452,7 +459,9 @@
           ["Indoor session", "Intensiv futsal och snabba byten.", "image_1.jpg"],
           ["Matchmoment", "Winner-stays-on och tajta matcher.", "image_2.jpg"]
         ].each do |title, copy, image_name| %>
-          <div class="bb-highlight-card group relative rounded-3xl border border-slate-800 bg-slate-950/60 shadow-lg shadow-slate-950/50">
+          <article
+            class="bb-highlight-card project-card group relative rounded-3xl border border-slate-800 bg-slate-950/60 shadow-lg shadow-slate-950/50"
+          >
             <div class="aspect-[4/5] overflow-hidden">
               <%= image_tag image_name,
                             alt: title,
@@ -463,9 +472,78 @@
               <p class="text-xs font-semibold text-slate-50 mb-0.5"><%= title %></p>
               <p class="text-[11px] text-slate-300"><%= copy %></p>
             </div>
-          </div>
+          </article>
         <% end %>
       </div>
     </div>
   </section>
 </div>
+
+<script>
+  function initBarnabollHome() {
+    const hero = document.getElementById("hero");
+    if (!hero) return;
+
+    // Prevent double-init with Turbo
+    if (hero.dataset.bbFadeInit === "true") return;
+    hero.dataset.bbFadeInit = "true";
+
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Optional hero fade on initial load
+      gsap.from(".hero-fade", {
+        opacity: 0,
+        y: 24,
+        duration: 0.8,
+        ease: "power2.out",
+        stagger: 0.15
+      });
+
+      // Section titles (like your example)
+      gsap.utils.toArray(".section-title").forEach((title) => {
+        gsap.from(title, {
+          opacity: 0,
+          y: 30,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: title,
+            start: "top 85%"
+          }
+        });
+      });
+
+      // Timeline-style items in "Så funkar"
+      gsap.utils.toArray(".timeline-item").forEach((item) => {
+        gsap.from(item, {
+          opacity: 0,
+          x: -30,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: item,
+            start: "top 90%"
+          }
+        });
+      });
+
+      // Cards: reuse your pattern, plus Barnaboll-specific classes
+      gsap.utils.toArray(".project-card, .hobby-card, .recipe-card, .bb-card-elevated, .bb-highlight-card").forEach((card) => {
+        gsap.from(card, {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 90%"
+          }
+        });
+      });
+    }
+  }
+
+  document.addEventListener("turbo:load", initBarnabollHome);
+  document.addEventListener("DOMContentLoaded", initBarnabollHome);
+</script>

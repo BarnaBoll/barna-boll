@@ -3,10 +3,17 @@
 The app is built with **Ruby on Rails 8**, **PostgreSQL**, **Tailwind CSS**, and **Devise** (with Google & Facebook login).
 
 --------- LOCAL DEVELOPMENT ---------
-Start the app with => PORT=4001 bin/dev
-Check if the server is running => lsof -i :4001
-If port is still open kill it => kill -9 PORT_NUMBER
-Delete leftover builds data => rm -f tmp/pids/server.pid
+
+- Start the app with
+  PORT=4001 bin/dev
+
+- Check if the server is running
+  lsof -i :4001
+
+- If port is still open kill it
+  kill -9 PORT_NUMBER
+- Delete leftover builds data
+  rm -f tmp/pids/server.pid
 
 ## Tech Stack
 

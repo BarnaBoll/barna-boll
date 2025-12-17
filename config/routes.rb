@@ -38,8 +38,10 @@ Rails.application.routes.draw do
   get "features", to: "pages#features"
   get "business", to: "pages#business"
   get "help",     to: "pages#help"
+  get "social",   to: "pages#social"
 
   get "schedule", to: "matches#schedule", as: :schedule
+  resources :matches, only: [ :show ]
   resources :registrations, only: [ :create ]
 
   # Admin pages

@@ -1,0 +1,94 @@
+<% if media.present? || stories.present? %>
+  <section class="mt-10">
+    <header class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-xl font-semibold text-slate-50">
+          Från Instagram
+        </h2>
+        <p class="text-sm text-slate-400">
+          Följ oss på Instagram för fler uppdateringar:
+          <a href="https://www.instagram.com/barnaboll/"
+             target="_blank"
+             rel="noopener"
+             class="underline hover:text-slate-200">
+            @barnaboll
+          </a>
+        </p>
+      </div>
+
+      <% if stories.present? %>
+        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300 border border-emerald-500/40">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Aktiva stories
+        </span>
+      <% end %>
+    </header>
+
+    <% if stories.present? %>
+      <div class="mb-6 overflow-x-auto">
+        <div class="flex gap-4">
+          <% stories.each do |story| %>
+            <a href="<%= story["permalink"] %>"
+               target="_blank"
+               rel="noopener"
+               class="flex-shrink-0">
+              <div class="w-20 h-20 rounded-full border-2 border-pink-500/80 p-0.5">
+                <div class="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                  <% if story["media_type"] == "VIDEO" %>
+                    <video
+                      class="w-full h-full object-cover"
+                      muted
+                      playsinline>
+                      <source src="<%= story["media_url"] %>" type="video/mp4">
+                    </video>
+                  <% else %>
+                    <img
+                      src="<%= story["thumbnail_url"] || story["media_url"] %>"
+                      alt="Instagram story"
+                      class="w-full h-full object-cover" />
+                  <% end %>
+                </div>
+              </div>
+            </a>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if media.present? %>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <% media.each do |item| %>
+          <a href="<%= item["permalink"] %>"
+             target="_blank"
+             rel="noopener"
+             class="group relative block rounded-xl overflow-hidden bg-slate-900">
+            <% if item["media_type"] == "VIDEO" || item["media_type"] == "REELS" %>
+              <video
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                muted
+                playsinline
+                preload="metadata">
+                <source src="<%= item["media_url"] %>" type="video/mp4">
+              </video>
+              <div class="absolute top-2 right-2 bg-black/60 rounded-full px-2 py-1 text-xs">
+                🎥
+              </div>
+            <% else %>
+              <img
+                src="<%= item["media_url"] %>"
+                alt="<%= item["caption"].to_s.truncate(80) %>"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+            <% end %>
+
+            <% if item["caption"].present? %>
+              <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-2 text-xs text-slate-50 line-clamp-2">
+                <%= item["caption"] %>
+              </div>
+            <% end %>
+          </a>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+<% end %>

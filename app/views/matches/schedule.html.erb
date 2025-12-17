@@ -19,15 +19,15 @@
       </div>
 
       <!-- Right side: city filter + view toggle + period nav -->
-      <div class="w-full md:w-auto flex flex-col items-end gap-2">
+      <div class="w-full md:w-auto flex flex-col items-stretch md:items-end gap-2">
         <!-- Row: city select + view toggle -->
-        <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3">
-          <!-- City filter (inline label) -->
+        <div class="w-full md:w-auto flex flex-col sm:flex-row sm:items-center sm:justify-between md:justify-end gap-3">
+          <!-- City filter -->
           <%= form_with url: schedule_path,
                         method: :get,
                         local: true,
-                        class: "text-xs" do %>
-            <div class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 pl-3 pr-1 py-1.5"
+                        class: "text-xs w-full sm:w-auto" do %>
+            <div class="relative inline-flex w-full sm:w-auto items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 pl-3 pr-1 py-1.5"
                  data-city-select-wrapper>
               <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                 Stad
@@ -36,28 +36,24 @@
               <% current_city_label = @selected_city&.name || "Alla städer" %>
               <% current_city_color = @selected_city_color.presence || "#e5e7eb" %>
 
-              <!-- Hidden field that actually holds the value for the form -->
               <%= hidden_field_tag :city, params[:city].to_s, id: "calendar-city-input" %>
               <%= hidden_field_tag :view, @view %>
               <%= hidden_field_tag :start, @reference_date.iso8601 %>
 
-              <!-- Custom dropdown button -->
               <button type="button"
                       data-city-select-button
-                      class="inline-flex items-center gap-2 rounded-full bg-transparent px-2 py-0.5 text-[11px] text-slate-100 focus:outline-none focus:ring-0">
-                <span class="h-1.5 w-1.5 rounded-full"
-                      data-city-dot
-                      style="background-color: <%= current_city_color %>;"></span>
-                <span data-city-label><%= current_city_label %></span>
+                      class="flex-1 inline-flex items-center justify-between gap-2 rounded-full bg-transparent px-2 py-0.5 text-[11px] text-slate-100 focus:outline-none">
+                <span class="inline-flex items-center gap-2 min-w-0">
+                  <span class="h-1.5 w-1.5 rounded-full shrink-0"
+                        data-city-dot
+                        style="background-color: <%= current_city_color %>;"></span>
+                  <span data-city-label class="truncate"><%= current_city_label %></span>
+                </span>
+                <span class="ml-1 text-[10px] text-slate-400 shrink-0">▾</span>
               </button>
 
-              <!-- Faux chevron -->
-              <span class="ml-1 text-[10px] text-slate-400">▾</span>
-
-              <!-- Custom dropdown menu -->
               <div data-city-select-menu
-                   class="absolute z-30 mt-40 md:mt-32 right-4 md:right-auto md:translate-x-0 w-48 rounded-2xl border border-slate-700 bg-slate-900/95 shadow-xl py-1 hidden">
-                <!-- "Alla städer" option -->
+                   class="absolute z-30 top-full mt-2 right-0 w-56 rounded-2xl border border-slate-700 bg-slate-900/95 shadow-xl py-1 hidden">
                 <button type="button"
                         class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] text-slate-100 text-left hover:bg-slate-800/80"
                         data-city-option
@@ -81,7 +77,7 @@
                        elsif city.respond_to?(:color) && city.color.present?
                          city.color
                        else
-                         "#f97316" # fallback orange
+                         "#f97316"
                        end %>
                   <button type="button"
                           class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] text-slate-100 text-left hover:bg-slate-800/80"
@@ -99,7 +95,7 @@
           <% end %>
 
           <!-- View toggle -->
-          <div class="flex items-center text-[11px] rounded-full border border-slate-700 bg-slate-900/70 px-1 py-1">
+          <div class="flex items-center text-[11px] rounded-full border border-slate-700 bg-slate-900/70 px-1 py-1 w-full sm:w-auto">
             <%= link_to schedule_path(view: :week, city: params[:city], start: @reference_date.iso8601),
                         class: "flex-1 rounded-full px-3 py-1 text-center font-semibold #{@view == 'week' ? 'bg-slate-50 text-slate-900' : 'text-slate-300 hover:text-orange-300'}" do %>
               Vecka
@@ -117,32 +113,25 @@
           </div>
         </div>
 
-        <!-- Period nav (previous / next) -->
-        <div class="flex items-center justify-end text-[11px] text-slate-400 gap-2 w-full md:w-auto">
+        <!-- Period nav -->
+        <div class="flex items-center justify-between md:justify-end text-[11px] text-slate-400 gap-2 w-full md:w-auto">
           <% prev_ref =
                case @view
-               when "week"
-                 (@reference_date - 7.days)
-               when "month"
-                 (@reference_date - 1.month)
-               else # list
-                 (@reference_date - 30.days)
+               when "week"  then (@reference_date - 7.days)
+               when "month" then (@reference_date - 1.month)
+               else              (@reference_date - 30.days)
                end %>
 
           <% next_ref =
                case @view
-               when "week"
-                 (@reference_date + 7.days)
-               when "month"
-                 (@reference_date + 1.month)
-               else # list
-                 (@reference_date + 30.days)
+               when "week"  then (@reference_date + 7.days)
+               when "month" then (@reference_date + 1.month)
+               else              (@reference_date + 30.days)
                end %>
 
           <% period_label =
                case @view
                when "month"
-                 # Prefer Swedish month names if your locale is set; fall back to plain strftime
                  begin
                    l(@reference_date, format: :long)[0..-6] rescue @reference_date.strftime("%B %Y")
                  rescue
@@ -167,7 +156,7 @@
       </div>
     </section>
 
-    <!-- Legend / info -->
+    <!-- Legend -->
     <section class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-xs text-slate-400 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex items-center gap-3">
         <div class="h-7 w-7 rounded-full bg-gradient-to-tr from-orange-400 to-pink-500 flex items-center justify-center text-[11px] font-semibold text-slate-950 border border-slate-900/50">
@@ -206,10 +195,8 @@
             Inga kommande matcher hittades för den här perioden.
           </div>
         <% else %>
-          <!-- LIST VIEW (new UI) -->
           <% @matches_by_date.sort_by { |date, _| date || Date.today }.each do |date, matches_for_day| %>
             <div class="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
-              <!-- Date header -->
               <div class="flex items-center justify-between bg-slate-950/80 border-b border-slate-800 px-4 py-2.5">
                 <div>
                   <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500">
@@ -221,7 +208,6 @@
                 </div>
               </div>
 
-              <!-- Matches for this date -->
               <div class="divide-y divide-slate-800">
                 <% matches_for_day.each do |match| %>
                   <% booked   = match.total_players %>
@@ -252,9 +238,9 @@
                   <% disabled = full || already_registered %>
 
                   <div class="px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="space-y-1">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <p class="text-sm font-semibold text-slate-100">
+                    <div class="space-y-1 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2 min-w-0">
+                        <p class="text-sm font-semibold text-slate-100 truncate">
                           <%= match.title %>
                         </p>
                         <span class="inline-flex items-center gap-1 rounded-full border border-slate-700 px-2 py-0.5 text-[11px] text-slate-300">
@@ -288,10 +274,17 @@
                           <%= truncate(match.description, length: 120) %>
                         </p>
                       <% end %>
+
+                      <div class="pt-0.5">
+                        <%= link_to match_path(match),
+                                    class: "text-[11px] text-slate-400 hover:text-orange-300 inline-flex items-center gap-1" do %>
+                          <span class="hidden sm:inline">Detaljer</span>
+                          <span class="sm:hidden">ℹ︎</span>
+                        <% end %>
+                      </div>
                     </div>
 
                     <div class="flex flex-col items-stretch gap-2 sm:items-end sm:text-right">
-                      <!-- Capacity bar -->
                       <div class="w-full sm:w-40">
                         <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
                           <span>Platser</span>
@@ -306,10 +299,9 @@
                         </div>
                       </div>
 
-                      <!-- Register button / full / already registered -->
                       <button
                         type="button"
-                        class="mt-1 inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                        class="mt-1 inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] font-semibold whitespace-nowrap <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
                         <% unless disabled %>
                           data-open-register-modal
                           data-match-id="<%= match.id %>"
@@ -324,7 +316,8 @@
                         <% if full %>
                           Fullbokat
                         <% elsif already_registered %>
-                          Redan anmäld
+                          <span class="hidden sm:inline">Redan anmäld</span>
+                          <span class="sm:hidden">Anmäld</span>
                         <% else %>
                           Boka plats
                         <% end %>
@@ -337,13 +330,215 @@
           <% end %>
         <% end %>
 
+      <% elsif @view == "week" %>
+        <!-- WEEK VIEW (improved) -->
+
+        <!-- Mobile: agenda list by day -->
+        <div class="space-y-3 md:hidden">
+          <% (@start_date..@end_date).each do |day| %>
+            <% day_matches = @matches_by_date[day] || [] %>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
+              <div class="px-4 py-2.5 border-b border-slate-800 bg-slate-950/80">
+                <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                  <%= (l(day, format: :weekday) rescue day.strftime("%A")) %>
+                </p>
+                <p class="text-sm font-semibold text-slate-100">
+                  <%= (l(day, format: :long) rescue day.to_s) %>
+                </p>
+              </div>
+
+              <% if day_matches.blank? %>
+                <div class="px-4 py-3 text-xs text-slate-400">
+                  Inga matcher.
+                </div>
+              <% else %>
+                <div class="divide-y divide-slate-800">
+                  <% day_matches.each do |match| %>
+                    <% booked   = match.total_players %>
+                    <% capacity = match.hard_limit_total || 0 %>
+                    <% ratio    = capacity.positive? ? (booked.to_f / capacity.to_f) : 0.0 %>
+                    <% full     = capacity.positive? && booked >= capacity %>
+
+                    <% already_registered =
+                         if user_signed_in?
+                           match.registrations.where(user_id: current_user.id).exists? ||
+                             match.registrations.where(user_team_id: current_user.user_teams.select(:id)).exists?
+                         else
+                           false
+                         end %>
+
+                    <% disabled = full || already_registered %>
+                    <% city_dot_color = match.city&.color.presence || "#f97316" %>
+
+                    <div class="px-4 py-3 flex flex-col gap-2">
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                          <p class="text-sm font-semibold text-slate-100 truncate">
+                            <%= match.title %>
+                          </p>
+                          <p class="text-[11px] text-slate-400 mt-0.5">
+                            <% if match.time %>
+                              <span class="font-mono text-slate-200"><%= match.time.strftime("%H:%M") %></span>
+                              ·
+                            <% end %>
+                            <span class="inline-flex items-center gap-1">
+                              <span class="h-1.5 w-1.5 rounded-full"
+                                    style="background-color: <%= city_dot_color %>;"></span>
+                              <%= match.city.name %>
+                            </span>
+                            <% if match.location.present? %> · <%= match.location.name %><% end %>
+                          </p>
+                          <div class="pt-1">
+                            <%= link_to match_path(match),
+                                        class: "text-[11px] text-slate-400 hover:text-orange-300 inline-flex items-center gap-1" do %>
+                              <span class="hidden sm:inline">Detaljer</span>
+                              <span class="sm:hidden">ℹ︎</span>
+                            <% end %>
+                          </div>
+                        </div>
+
+                        <div class="shrink-0 text-right">
+                          <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500">Platser</p>
+                          <p class="font-mono text-[11px] text-slate-200"><%= booked %> / <%= capacity %></p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        class="inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] font-semibold whitespace-nowrap <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                        <% unless disabled %>
+                          data-open-register-modal
+                          data-match-id="<%= match.id %>"
+                          data-match-title="<%= match.title %>"
+                          data-match-city="<%= match.city.name %>"
+                          data-match-datetime="<%= [
+                            (l(match.date, format: :short) rescue match.date.to_s),
+                            (match.time&.strftime('%H:%M'))
+                          ].compact.join(' · ') %>"
+                          data-user-signed-in="<%= user_signed_in? %>"
+                        <% end %>>
+                        <% if full %>
+                          Fullbokat
+                        <% elsif already_registered %>
+                          Anmäld
+                        <% else %>
+                          Boka plats
+                        <% end %>
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Desktop: 7-column week with larger panels -->
+        <div class="hidden md:block rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
+          <div class="grid grid-cols-7 gap-px bg-slate-800/60">
+            <% (@start_date..@end_date).each do |day| %>
+              <% day_matches = @matches_by_date[day] || [] %>
+              <div class="bg-slate-950/90 p-3 min-h-[280px] flex flex-col">
+                <div class="flex items-baseline justify-between mb-2">
+                  <div class="min-w-0">
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                      <%= (l(day, format: :weekday) rescue day.strftime("%a")) %>
+                    </p>
+                    <p class="text-sm font-semibold text-slate-100">
+                      <%= day.day %>
+                    </p>
+                  </div>
+                  <span class="text-[11px] text-slate-500">
+                    <%= (l(day, format: :short) rescue day.to_s) %>
+                  </span>
+                </div>
+
+                <% if day_matches.blank? %>
+                  <p class="text-xs text-slate-500 mt-2">Inga matcher</p>
+                <% else %>
+                  <div class="space-y-2">
+                    <% day_matches.each do |match| %>
+                      <% booked   = match.total_players %>
+                      <% capacity = match.hard_limit_total || 0 %>
+                      <% full     = capacity.positive? && booked >= capacity %>
+
+                      <% already_registered =
+                           if user_signed_in?
+                             match.registrations.where(user_id: current_user.id).exists? ||
+                               match.registrations.where(user_team_id: current_user.user_teams.select(:id)).exists?
+                           else
+                             false
+                           end %>
+
+                      <% disabled = full || already_registered %>
+
+                      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div class="flex items-start justify-between gap-2">
+                          <div class="min-w-0">
+                            <p class="text-sm font-semibold text-slate-100 truncate">
+                              <%= match.title %>
+                            </p>
+                            <p class="text-[11px] text-slate-400 mt-0.5 truncate">
+                              <%= match.city.name %><% if match.location.present? %> · <%= match.location.name %><% end %>
+                            </p>
+                          </div>
+                          <% if match.time %>
+                            <span class="font-mono text-[11px] text-slate-200 shrink-0">
+                              <%= match.time.strftime("%H:%M") %>
+                            </span>
+                          <% end %>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-2">
+                          <%= link_to match_path(match),
+                                      class: "text-[11px] text-slate-400 hover:text-orange-300 inline-flex items-center gap-1" do %>
+                            Detaljer <span aria-hidden="true">→</span>
+                          <% end %>
+
+                          <span class="font-mono text-[11px] text-slate-300">
+                            <%= booked %> / <%= capacity %>
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          class="mt-2 w-full inline-flex items-center justify-center rounded-full px-3 py-2 text-[11px] font-semibold whitespace-nowrap <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                          <% unless disabled %>
+                            data-open-register-modal
+                            data-match-id="<%= match.id %>"
+                            data-match-title="<%= match.title %>"
+                            data-match-city="<%= match.city.name %>"
+                            data-match-datetime="<%= [
+                              (l(match.date, format: :short) rescue match.date.to_s),
+                              (match.time&.strftime('%H:%M'))
+                            ].compact.join(' · ') %>"
+                            data-user-signed-in="<%= user_signed_in? %>"
+                          <% end %>>
+                          <% if full %>
+                            Fullbokat
+                          <% elsif already_registered %>
+                            Redan anmäld
+                          <% else %>
+                            Boka plats
+                          <% end %>
+                        </button>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+
+              </div>
+            <% end %>
+          </div>
+        </div>
+
       <% else %>
-        <!-- MONTH / WEEK VIEW – grid-style calendar (always visible) -->
+        <!-- MONTH VIEW (grid) -->
         <div class="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
           <div class="grid grid-cols-7 gap-px bg-slate-800/60 text-[11px]">
             <% (@start_date..@end_date).each do |day| %>
               <% day_matches = @matches_by_date[day] || [] %>
-              <div class="min-h-[96px] bg-slate-950/90 p-1.5 flex flex-col">
+              <div class="min-h-[112px] bg-slate-950/90 p-1.5 flex flex-col min-w-0">
                 <div class="flex items-center justify-between mb-1">
                   <span class="text-[10px] uppercase tracking-[0.16em] text-slate-500">
                     <%= day.strftime("%a") %>
@@ -353,7 +548,7 @@
                   </span>
                 </div>
 
-                <div class="space-y-1">
+                <div class="space-y-1 min-w-0">
                   <% day_matches.each do |match| %>
                     <% booked   = match.total_players %>
                     <% capacity = match.hard_limit_total || 0 %>
@@ -370,47 +565,59 @@
 
                     <% disabled = full || already_registered %>
 
-                    <div class="rounded-xl border border-slate-800 bg-slate-900/80 px-2 py-1.5 flex flex-col gap-1">
-                      <div class="flex justify-between gap-2">
-                        <p class="text-[11px] font-semibold text-slate-100 truncate">
+                    <div class="rounded-xl border border-slate-800 bg-slate-900/80 px-2 py-2 flex flex-col gap-1 min-w-0">
+                      <div class="flex justify-between gap-2 min-w-0">
+                        <p class="text-[11px] font-semibold text-slate-100 truncate min-w-0">
                           <%= match.title %>
                         </p>
                         <% if match.time %>
-                          <span class="font-mono text-[10px] text-slate-300">
+                          <span class="font-mono text-[10px] text-slate-300 shrink-0">
                             <%= match.time.strftime("%H:%M") %>
                           </span>
                         <% end %>
                       </div>
+
                       <p class="text-[10px] text-slate-400 truncate">
                         <%= match.city.name %>
                         <% if match.location.present? %> · <%= match.location.name %><% end %>
                       </p>
 
-                      <button
-                        type="button"
-                        class="mt-0.5 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-semibold <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
-                        <% unless disabled %>
-                          data-open-register-modal
-                          data-match-id="<%= match.id %>"
-                          data-match-title="<%= match.title %>"
-                          data-match-city="<%= match.city.name %>"
-                          data-match-datetime="<%= [
-                            (l(match.date, format: :short) rescue match.date.to_s),
-                            (match.time&.strftime('%H:%M'))
-                          ].compact.join(' · ') %>"
-                          data-user-signed-in="<%= user_signed_in? %>"
-                        <% end %>>
-                        <% if full %>
-                          Fullbokat
-                        <% elsif already_registered %>
-                          Redan anmäld
-                        <% else %>
-                          Boka
+                      <!-- Actions: stack nicely on narrow widths -->
+                      <div class="pt-0.5 flex flex-col gap-1">
+                        <button
+                          type="button"
+                          class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[10px] font-semibold whitespace-nowrap <%= disabled ? 'text-slate-300 bg-slate-800 cursor-not-allowed' : 'text-slate-950 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-300 hover:to-pink-400' %>"
+                          <% unless disabled %>
+                            data-open-register-modal
+                            data-match-id="<%= match.id %>"
+                            data-match-title="<%= match.title %>"
+                            data-match-city="<%= match.city.name %>"
+                            data-match-datetime="<%= [
+                              (l(match.date, format: :short) rescue match.date.to_s),
+                              (match.time&.strftime('%H:%M'))
+                            ].compact.join(' · ') %>"
+                            data-user-signed-in="<%= user_signed_in? %>"
+                          <% end %>>
+                          <% if full %>
+                            Fullbokat
+                          <% elsif already_registered %>
+                            <span class="hidden sm:inline">Redan anmäld</span>
+                            <span class="sm:hidden">Anmäld</span>
+                          <% else %>
+                            Boka
+                          <% end %>
+                        </button>
+
+                        <%= link_to match_path(match),
+                                    class: "text-[10px] text-slate-400 hover:text-orange-300 inline-flex items-center gap-1 self-start" do %>
+                          <span class="hidden sm:inline">Detaljer</span>
+                          <span class="sm:hidden">ℹ︎</span>
                         <% end %>
-                      </button>
+                      </div>
                     </div>
                   <% end %>
                 </div>
+
               </div>
             <% end %>
           </div>
@@ -427,15 +634,12 @@
     <!-- Logged-in: Register for match modal -->
     <div id="register-modal"
          class="fixed inset-0 w-screen h-screen z-50 hidden opacity-0 pointer-events-none transition-opacity duration-300 js-calendar-modal">
-      <!-- Overlay -->
       <div class="fixed inset-0 w-screen h-screen bg-gradient-to-br from-black/80 via-slate-950/70 to-black/80 backdrop-blur-md transition-opacity duration-300"
            data-modal-dismiss></div>
 
-      <!-- Centered modal -->
       <div class="absolute inset-0 flex items-center justify-center px-4">
         <div id="register-modal-content"
              class="w-full max-w-md rounded-2xl border border-slate-700/70 bg-slate-950 p-5 shadow-xl scale-95 opacity-0 transition-all duration-300">
-          <!-- Header -->
           <div class="flex items-center justify-between mb-3">
             <div>
               <p class="text-[11px] uppercase tracking-[0.18em] text-orange-300 mb-1">
@@ -454,7 +658,6 @@
             </button>
           </div>
 
-          <!-- Body -->
           <p class="text-xs text-slate-400 mb-4">
             Välj om du vill anmäla dig som individuell spelare eller med ett lag.
           </p>
@@ -536,12 +739,9 @@
                                     readonly: true,
                                     class: "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-orange-400/70 cursor-default",
                                     id: "team-size-input" %>
-                <p class="text-[10px] text-slate-500 mt-1" id="team-size-help">
-                  <!-- Dynamic help text will be inserted here -->
-                </p>
+                <p class="text-[10px] text-slate-500 mt-1" id="team-size-help"></p>
               </div>
 
-              <!-- NEW: team members list -->
               <div id="team-members-wrapper" class="hidden mt-2">
                 <label class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-1">
                   Spelare i laget
@@ -550,7 +750,6 @@
                   Markera vilka spelare som <span class="font-semibold text-slate-300">kommer</span>. Avmarkera de som inte kan komma. Antalet kryssade spelare styr automatiskt antalet platser.
                 </p>
                 <div id="team-members-list" class="space-y-1 text-[11px] text-slate-100">
-                  <!-- Fylls i via JavaScript baserat på valt lag -->
                 </div>
               </div>
 
@@ -584,15 +783,12 @@
     <!-- Guest: Auth required modal -->
     <div id="auth-required-modal"
          class="fixed inset-0 w-screen h-screen z-50 hidden opacity-0 pointer-events-none transition-opacity duration-300 js-calendar-modal">
-      <!-- Overlay -->
       <div class="fixed inset-0 w-screen h-screen bg-gradient-to-br from-black/85 via-slate-950/70 to-black/85 backdrop-blur-md transition-opacity duration-300"
            data-modal-dismiss></div>
 
-      <!-- Centered modal -->
       <div class="absolute inset-0 flex items-center justify-center px-4">
         <div id="auth-required-modal-content"
              class="w-full max-w-md rounded-2xl border border-slate-700/70 bg-slate-950 p-5 shadow-xl scale-95 opacity-0 transition-all duration-300">
-          <!-- Header -->
           <div class="flex items-center justify-between mb-3">
             <h3 class="text-sm font-semibold text-slate-100">
               Skapa konto för att boka
@@ -604,7 +800,6 @@
             </button>
           </div>
 
-          <!-- Body -->
           <p class="text-xs text-slate-300 mb-3">
             Du behöver ett Barnaboll-konto för att anmäla dig till matcher.
           </p>
@@ -612,7 +807,6 @@
             Med konto kan du se dina kommande matcher, bygga stats och få uppdateringar om nya sessions.
           </p>
 
-          <!-- CTAs -->
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
             <%= link_to "Logga in",
                         new_user_session_path,
@@ -634,19 +828,11 @@
 </div>
 
 <style>
-  @keyframes fadeInSlow {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  @keyframes fadeOutSlow {
-    from { opacity: 1; }
-    to   { opacity: 0; }
-  }
-
+  @keyframes fadeInSlow { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOutSlow { from { opacity: 1; } to { opacity: 0; } }
   @keyframes modalZoomIn {
-    0%   { transform: scale(0.92); opacity: 0; }
-    100% { transform: scale(1);    opacity: 1; }
+    0% { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
   }
 </style>
 
@@ -664,12 +850,9 @@ function closeCalendarModal(modal) {
   modal.style.animation = "fadeOutSlow 0.25s ease-in";
   modal.style.opacity = "0";
   modal.classList.add("pointer-events-none");
-  setTimeout(function () {
-    modal.classList.add("hidden");
-  }, 260);
+  setTimeout(function () { modal.classList.add("hidden"); }, 260);
 }
 
-// Reset on load so back-button doesn't leave a "dead" modal open
 function resetCalendarModals() {
   document.querySelectorAll(".js-calendar-modal").forEach(function (modal) {
     modal.classList.add("hidden", "pointer-events-none");
@@ -688,16 +871,13 @@ function initTeamRegistration() {
 
   if (!teamSelect || !teamSizeInput || !teamSizeHelp || !teamMembersList) return;
 
-  // extra safety: make sure number field can't be changed manually
   teamSizeInput.readOnly = true;
   teamSizeInput.addEventListener('wheel', function (e) { e.preventDefault(); });
   teamSizeInput.addEventListener('keydown', function (e) { e.preventDefault(); });
 
   function syncTeamSizeFromCheckboxes() {
     const checkedCount = teamMembersList.querySelectorAll('input[name="present_member_ids[]"]:checked').length;
-    if (checkedCount > 0) {
-      teamSizeInput.value = checkedCount;
-    }
+    if (checkedCount > 0) teamSizeInput.value = checkedCount;
   }
 
   function buildMembersListFromSelection() {
@@ -708,11 +888,7 @@ function initTeamRegistration() {
     let members = [];
 
     if (membersJson) {
-      try {
-        members = JSON.parse(membersJson);
-      } catch (e) {
-      members = [];
-      }
+      try { members = JSON.parse(membersJson); } catch (e) { members = []; }
     }
 
     teamMembersList.innerHTML = '';
@@ -742,9 +918,7 @@ function initTeamRegistration() {
       teamMembersList.appendChild(row);
     });
 
-    if (teamMembersWrapper) {
-      teamMembersWrapper.classList.remove('hidden');
-    }
+    if (teamMembersWrapper) teamMembersWrapper.classList.remove('hidden');
 
     const memberCount = members.length;
     teamSizeInput.value = memberCount;
@@ -772,44 +946,34 @@ function initTeamRegistration() {
     buildMembersListFromSelection();
   }
 
-  teamSelect.addEventListener('change', function() {
-    updateTeamSizeFromSelection();
-  });
+  teamSelect.addEventListener('change', function() { updateTeamSizeFromSelection(); });
 
   document.querySelectorAll('.js-register-type-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      if (this.dataset.type === 'team') {
-        setTimeout(updateTeamSizeFromSelection, 50);
-      }
+      if (this.dataset.type === 'team') setTimeout(updateTeamSizeFromSelection, 50);
     });
   });
 
-  if (typeInput && typeInput.value === 'team') {
-    updateTeamSizeFromSelection();
-  }
+  if (typeInput && typeInput.value === 'team') updateTeamSizeFromSelection();
 }
 
 function initCalendarModals() {
   resetCalendarModals();
 
-  var registerModal         = document.getElementById("register-modal");
-  var registerModalContent  = document.getElementById("register-modal-content");
-  var authModal             = document.getElementById("auth-required-modal");
-  var authModalContent      = document.getElementById("auth-required-modal-content");
+  var registerModal        = document.getElementById("register-modal");
+  var registerModalContent = document.getElementById("register-modal-content");
+  var authModal            = document.getElementById("auth-required-modal");
+  var authModalContent     = document.getElementById("auth-required-modal-content");
   var teamMembersWrapperRef = document.getElementById("team-members-wrapper");
   var teamMembersListRef    = document.getElementById("team-members-list");
 
-  // Close handlers
   [registerModal, authModal].forEach(function (modal) {
     if (!modal) return;
     modal.querySelectorAll("[data-modal-dismiss]").forEach(function (el) {
-      el.addEventListener("click", function () {
-        closeCalendarModal(modal);
-      });
+      el.addEventListener("click", function () { closeCalendarModal(modal); });
     });
   });
 
-  // Open from match cards
   document.querySelectorAll("[data-open-register-modal]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var signedIn   = btn.dataset.userSignedIn === "true";
@@ -833,7 +997,6 @@ function initCalendarModals() {
         if (metaEl)  metaEl.textContent  = metaString;
         if (idInput) idInput.value       = matchId;
 
-        // Reset type selection to individual + hide team UI
         if (typeInput) typeInput.value = "individual";
         if (teamWrapper) teamWrapper.classList.add("hidden");
         if (userTeamWrapper) userTeamWrapper.classList.add("hidden");
@@ -852,7 +1015,6 @@ function initCalendarModals() {
     });
   });
 
-  // Individual vs team toggle
   document.querySelectorAll(".js-register-type-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var selectedType       = btn.dataset.type;
@@ -893,9 +1055,7 @@ function initCityDropdown() {
 
   if (!button || !menu || !input || !form) return;
 
-  button.addEventListener("click", function () {
-    menu.classList.toggle("hidden");
-  });
+  button.addEventListener("click", function () { menu.classList.toggle("hidden"); });
 
   menu.querySelectorAll("[data-city-option]").forEach(function (opt) {
     opt.addEventListener("click", function () {
@@ -916,11 +1076,8 @@ function initCityDropdown() {
     });
   });
 
-  // Close on outside click
   document.addEventListener("click", function (e) {
-    if (!wrapper.contains(e.target)) {
-      menu.classList.add("hidden");
-    }
+    if (!wrapper.contains(e.target)) menu.classList.add("hidden");
   });
 }
 

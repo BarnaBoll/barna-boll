@@ -167,6 +167,13 @@
                           · <%= match.price.to_i %> kr
                         <% end %>
                       </p>
+
+                      <!-- NEW: details link -->
+                      <div class="pt-0.5">
+                        <%= link_to "Detaljer",
+                                    match_path(match),
+                                    class: "text-[11px] text-slate-400 hover:text-orange-300" %>
+                      </div>
                     </div>
 
                     <div class="mt-2 sm:mt-0 flex flex-col items-stretch gap-2 sm:items-end sm:text-right">
@@ -284,6 +291,13 @@
                     · <%= match.city.name %>
                     <% if match.location.present? %> · <%= match.location.name %><% end %>
                   </p>
+
+                  <!-- NEW: details link -->
+                  <div class="pt-0.5">
+                    <%= link_to "Detaljer",
+                                match_path(match),
+                                class: "text-[11px] text-slate-400 hover:text-orange-300" %>
+                  </div>
 
                   <div class="mt-1">
                     <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
@@ -620,7 +634,6 @@ function initTeamRegistration() {
 
   if (!teamSelect || !teamSizeInput || !teamSizeHelp || !teamMembersList) return;
 
-  // extra safety: make sure number field can't be changed manually
   teamSizeInput.readOnly = true;
   teamSizeInput.addEventListener('wheel', function (e) { e.preventDefault(); });
   teamSizeInput.addEventListener('keydown', function (e) { e.preventDefault(); });
@@ -684,7 +697,6 @@ function initTeamRegistration() {
     teamSizeInput.max   = memberCount;
     teamSizeHelp.textContent = `Antal medlemmar i laget: ${memberCount}. Avmarkera de som inte kan komma – vi uppdaterar antalet platser automatiskt.`;
 
-    // Listen for changes on checkboxes to keep team_size in sync
     teamMembersList.addEventListener('change', syncTeamSizeFromCheckboxes);
     syncTeamSizeFromCheckboxes();
   }
@@ -703,7 +715,6 @@ function initTeamRegistration() {
       }
     }
 
-    // Build member list as well
     buildMembersListFromSelection();
   }
 
@@ -714,7 +725,6 @@ function initTeamRegistration() {
   document.querySelectorAll('.js-register-type-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       if (this.dataset.type === 'team') {
-        // Small delay to ensure the team wrappers are visible
         setTimeout(updateTeamSizeFromSelection, 50);
       }
     });
@@ -767,7 +777,6 @@ function initCalendarModals() {
         if (metaEl)  metaEl.textContent  = metaString;
         if (idInput) idInput.value       = matchId;
 
-        // Reset type selection to individual
         if (typeInput) typeInput.value = "individual";
         if (teamWrapper) teamWrapper.classList.add("hidden");
         if (userTeamWrapper) userTeamWrapper.classList.add("hidden");

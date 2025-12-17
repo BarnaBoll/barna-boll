@@ -1,0 +1,25 @@
+ <% content_for :title, "Sociala medier – Barnaboll" %>
+
+<section class="space-y-6">
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-50">
+        Sociala medier
+      </h1>
+      <p class="text-slate-400 mt-1">
+        Se de senaste uppdateringarna från vårt Instagramkonto.
+      </p>
+    </div>
+
+    <a href="https://www.instagram.com/barnaboll/"
+       target="_blank"
+       rel="noopener"
+       class="inline-flex items-center gap-2 rounded-full bg-pink-500 px-4 py-2 text-sm font-medium text-white hover:bg-pink-600 transition">
+      <span>Följ @barnaboll</span>
+    </a>
+  </header>
+
+  <%= render "instagram_feed",
+             media: @instagram_media,
+             stories: @instagram_stories %>
+</section>

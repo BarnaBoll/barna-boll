@@ -62,4 +62,16 @@ class MatchesController < ApplicationController
         UserTeam.none
       end
   end
+  def show
+    @match =
+      Match
+        .includes(
+          :city,
+          :location,
+          teams: { registrations: [ :user, :user_team ] }
+        )
+        .find(params[:id])
+
+    @teams = @match.teams.order(:id)
+  end
 end

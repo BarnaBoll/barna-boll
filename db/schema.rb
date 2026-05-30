@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_13_104636) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_30_155529) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -81,9 +81,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_104636) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "registration_members", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "registration_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["registration_id"], name: "index_registration_members_on_registration_id"
+    t.index ["user_id"], name: "index_registration_members_on_user_id"
+  end
+
   create_table "registrations", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.jsonb "present_member_ids", default: [], null: false
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
     t.integer "team_size", default: 1, null: false
@@ -161,6 +169,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_104636) do
   add_foreign_key "player_stats", "cities"
   add_foreign_key "player_stats", "locations"
   add_foreign_key "player_stats", "users"
+  add_foreign_key "registration_members", "registrations"
+  add_foreign_key "registration_members", "users"
   add_foreign_key "registrations", "teams"
   add_foreign_key "registrations", "user_teams"
   add_foreign_key "registrations", "users"

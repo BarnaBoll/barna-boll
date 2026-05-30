@@ -121,15 +121,6 @@
             <span>Logga in med Google</span>
           <% end %>
 
-          <%= button_to user_facebook_omniauth_authorize_path,
-                        method: :post,
-                        data: { turbo: false },
-                        class: "w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-2.5 text-sm font-medium text-slate-100 hover:bg-slate-800/80 transition" do %>
-            <%= image_tag "facebook.svg",
-                          alt: "Facebook",
-                          class: "h-4 w-4" %>
-            <span>Logga in med Facebook</span>
-          <% end %>
         </div>
 
         <% if devise_mapping.registerable? %>

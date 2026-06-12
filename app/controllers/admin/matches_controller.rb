@@ -1,6 +1,6 @@
 module Admin
   class MatchesController < BaseController
-    before_action :set_match, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_match, only: [ :show, :edit, :update, :destroy, :record_result ]
     before_action :load_cities_and_locations, only: [ :new, :edit, :create, :update ]
 
     def index
@@ -37,6 +37,20 @@ module Admin
     def destroy
       @match.destroy
       redirect_to admin_matches_path, notice: "Match borttagen."
+    end
+
+    def record_result
+      winner_id = params.dig(:result, :winner_team_id)
+
+      if winner_id.blank?
+        redirect_to admin_match_path(@match), alert: "Du måste välja ett vinnande lag."
+        return
+      end
+
+      # Call your existing service
+      MatchResultService.new.record(@match, { winner_team_id: winner_id.to_i })
+
+      redirect_to admin_match_path(@match), notice: "Resultatet har registrerats och spelarnas statistik har uppdaterats."
     end
 
     private

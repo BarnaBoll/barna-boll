@@ -20,6 +20,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :matches do
+    member do
+      post :record_result
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
